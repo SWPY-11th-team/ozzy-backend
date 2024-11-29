@@ -47,5 +47,5 @@ jobs:
       #빌드한 jar 파일을 도커 이미지로 빌드하고 도커 허브에 푸시
       - name: docker build and push
         run: |
-          docker build --no-cache -t ${{ secrets.DOCKER_REPO }}:test ./docker
+          docker build --no-cache -t ${{ secrets.DOCKER_REPO }}:test .
           docker push ${{ secrets.DOCKER_REPO }}:test
