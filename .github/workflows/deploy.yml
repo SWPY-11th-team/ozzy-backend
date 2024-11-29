@@ -38,9 +38,14 @@ jobs:
       - name: Build with Gradle
         run: ./gradlew clean build
 
+      - name: Login to Docker hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
       #빌드한 jar 파일을 도커 이미지로 빌드하고 도커 허브에 푸시
       - name: docker build and push
         run: |
-          docker login -u ${{ secrets.DOCKER_USERNAME }} --password-stdin ${{ secrets.DOCKER_PASSWORD }}
           docker build --no-cache -t ${{ secrets.DOCKER_REPO }}:test .
           docker push ${{ secrets.DOCKER_REPO }}:test
