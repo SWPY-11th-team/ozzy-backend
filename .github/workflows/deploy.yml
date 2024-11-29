@@ -49,3 +49,24 @@ jobs:
         run: |
           docker build --no-cache -t ${{ secrets.DOCKER_REPO }}:test .
           docker push ${{ secrets.DOCKER_REPO }}:test
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: NCP login and docker image pull and run
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.NCP_HOST }}
+          username: ${{ secrets.NCP_USERNAME }}
+          password: ${{ secrets.NCP_PASSWORD }}
+          port: ${{ secrets.NCP_PORT }}
+          script: |
+            echo ${{ secrets.DOCKERHUB_TOKEN }} | sudo docker login -u ${{ secrets.DOCKER_USERNAME }} --password-stdin
+            sudo docker stop $(sudo docker ps -a -q)
+            sudo docker rm -f $(sudo docker ps -a -q)
+            sudo docker pull ${{ secrets.DOCKER_REPO }}:test
+            sudo docker run -d -p 8080:8080 ${{ secrets.DOCKER_REPO }}:test
+            sudo docker image prune -f
+            ps -ef | grep
