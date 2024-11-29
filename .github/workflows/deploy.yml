@@ -69,4 +69,4 @@ jobs:
             sudo docker pull ${{ secrets.DOCKER_REPO }}:test
             sudo docker run -d -p 80:8080 ${{ secrets.DOCKER_REPO }}:test
             sudo docker image prune -f
-            ps -ef | grep
+            ps -ef
