@@ -21,9 +21,9 @@ public class TestController {
 
     private final TestService testService;
 
-    @GetMapping("")
-    public void test() {
-        testService.first();
+    @GetMapping("/select-db")
+    public int test() {
+        return testService.first();
     }
 
     @GetMapping("/view")
@@ -32,8 +32,9 @@ public class TestController {
     }
 
     @GetMapping("/map")
-    public ResponseEntity<Map<String, String>> map() {
-        return new ResponseEntity<>(Map.of("1", "hi"), HttpStatus.OK);
+    public ResponseEntity<Map<String, Object>> map() {
+        int count = testService.first();
+        return new ResponseEntity<>(Map.of("hi", "1","seq",count), HttpStatus.OK);
     }
 
 }
