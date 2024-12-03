@@ -9,7 +9,6 @@ public class OzzyApplication {
 
 	public static void main(String[] args) {
 		System.out.println("Hello World!");
-		System.out.println("Hello World! 22");
 		SpringApplication.run(OzzyApplication.class, args);
 	}
 
