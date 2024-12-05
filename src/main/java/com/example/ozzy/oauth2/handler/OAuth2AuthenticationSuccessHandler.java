@@ -5,6 +5,7 @@ import com.example.ozzy.oauth2.service.OAuth2UserPrincipal;
 import com.example.ozzy.oauth2.user.OAuth2Provider;
 import com.example.ozzy.oauth2.user.OAuth2UserUnlinkManager;
 import com.example.ozzy.oauth2.util.CookieUtils;
+import com.example.ozzy.oauth2.util.JwtTokenUtil;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -31,6 +32,7 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
 
     private final HttpCookieOAuth2AuthorizationRequestRepository httpCookieOAuth2AuthorizationRequestRepository;
     private final OAuth2UserUnlinkManager oAuth2UserUnlinkManager;
+    private final JwtTokenUtil jwtTokenUtil;
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
@@ -55,13 +57,13 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
         Optional<String> redirectUri = CookieUtils.getCookie(request, REDIRECT_URI_PARAM_COOKIE_NAME)
                 .map(Cookie::getValue);
 
-        String targetUrl = redirectUri.orElse(getDefaultTargetUrl());
+        final String targetUrl = redirectUri.orElse(getDefaultTargetUrl());
 
-        String mode = CookieUtils.getCookie(request, MODE_PARAM_COOKIE_NAME)
+        final String mode = CookieUtils.getCookie(request, MODE_PARAM_COOKIE_NAME)
                 .map(Cookie::getValue)
                 .orElse("");
 
-        OAuth2UserPrincipal principal = getOAuth2UserPrincipal(authentication);
+        final OAuth2UserPrincipal principal = getOAuth2UserPrincipal(authentication);
 
         if (principal == null) {
             return UriComponentsBuilder.fromUriString(targetUrl)
@@ -80,8 +82,11 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
                     principal.getUserInfo().getAccessToken()
             );
 
-            String accessToken = "test_access_token";
-            String refreshToken = "test_refresh_token";
+            final String accessToken = jwtTokenUtil.generateAccessToken(principal.getUserInfo().getEmail());
+            final String refreshToken = jwtTokenUtil.generateRefreshToken(principal.getUserInfo().getEmail());
+
+            log.info("accessToken : {}", accessToken);
+            log.info("refreshToken : {}", refreshToken);
 
             return UriComponentsBuilder.fromUriString(targetUrl)
                     .queryParam("accessToken", accessToken)
@@ -90,7 +95,7 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
 
         } else if ("logout".equalsIgnoreCase(mode)) {
 
-            String accessToken = principal.getUserInfo().getAccessToken();
+            final String accessToken = principal.getUserInfo().getAccessToken();
             OAuth2Provider provider = principal.getUserInfo().getProvider();
 
             // TODO: DB 삭제
