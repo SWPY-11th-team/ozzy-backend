@@ -1,6 +1,7 @@
 package com.example.ozzy.oauth2.user;
 
-import lombok.*;
+import lombok.Getter;
+import lombok.ToString;
 
 @Getter
 @ToString

@@ -1,8 +1,10 @@
 package com.example.ozzy.user.dto.request;
 
 import com.example.ozzy.oauth2.service.OAuth2UserPrincipal;
-import lombok.*;
-import org.json.JSONPropertyName;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 @Getter
 @ToString

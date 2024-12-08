@@ -23,8 +23,38 @@
 
     <insert id="insertRefreshToken" parameterType="com.example.ozzy.user.dto.request.RefreshTokenRequest">
         INSERT INTO OZZY.REFRESH_TOKEN
-            (REFRESH_TOKEN_SEQ, TOKEN, CREATE_AT, EXPIRED_AT, USER_SEQ)
-        VALUES(OZZY.REFRESH_TOKEN_SEQ.NEXTVAL, #{token}, sysdate, #{expiredAt}, #{userSeq})
+        (
+             REFRESH_TOKEN_SEQ
+            ,TOKEN
+            ,CREATE_AT
+            ,EXPIRED_AT
+            ,USER_SEQ
+        ) VALUES (
+            OZZY.REFRESH_TOKEN_SEQ.NEXTVAL
+            ,#{token}
+            ,sysdate
+            ,#{expiredAt}
+            ,#{userSeq}
+        )
+    </insert>
+
+    <insert id="insertServiceTerms" parameterType="com.example.ozzy.user.dto.request.ServiceTermsRequest">
+        INSERT INTO OZZY.SERVICE_TERMS
+        (
+            USER_SEQ
+            ,AGREED1
+            ,AGREED2
+            ,AGREED3
+            ,AGREED4
+            ,CREATE_AT
+        ) VALUES (
+            #{userSeq}
+            ,#{agreed1}
+            ,#{agreed2}
+            ,#{agreed3}
+            ,#{agreed4}
+            ,sysdate
+        )
     </insert>
 
 </mapper>

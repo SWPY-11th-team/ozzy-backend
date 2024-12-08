@@ -8,18 +8,21 @@ import io.jsonwebtoken.SignatureAlgorithm;
 import org.springframework.stereotype.Component;
 
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 @Component
 public class JwtTokenUtil {
 
     // todo value application 이동 , !! HS512에 적합한 비밀 키 재 생성
     private static final String secretKey = "I4u+zERuz0fEHWx5qYN1guJ4gRUzIxdwyy+qHtM3V4LRO2WVtYVcnFw1E5fhtEvQfH8HMyhChCz3csQsdbZcXw==";
-    private static final long accessTokenValidity = 1000 * 10; // 10초
-//    private static final long accessTokenValidity = 1000 * 60;  // 1분
+//    private static final long accessTokenValidity = 1000 * 10; // 10초
+    private static final long accessTokenValidity = 1000 * 60;  // 1분
 //    private static final long accessTokenValidity = 1000 * 60 * 30; // 30분
     private static final long refreshTokenValidity = 1000 * 60 * 60 * 24 * 7; // 7일
 
+    // 로그인 발급
     public Token generateToken(int seq, OAuth2UserPrincipal principal) {
         Map<String, Object> claims = new HashMap<>();
         claims.put("userSeq", seq);
@@ -31,6 +34,21 @@ public class JwtTokenUtil {
         String refreshToken = doGenerateToken(claims, principal.getUserInfo().getEmail(), refreshTokenValidity);
 
         return new Token(accessToken, refreshToken);
+    }
+
+    // 재발급
+    public Token reGenerateToken(String token) {
+        Claims user = getClaimsFromToken(token);
+
+        Map<String, Object> claims = new HashMap<>();
+        claims.put("userSeq", user.get("userSeq"));
+        claims.put("roles","user");
+        claims.put("email",user.get("email"));
+        claims.put("provider", user.get("provider"));
+
+        String accessToken = doGenerateToken(claims, user.get("email").toString(), accessTokenValidity);
+
+        return new Token(accessToken, token);
     }
 
     // Access Token 생성
@@ -65,8 +83,33 @@ public class JwtTokenUtil {
 
 
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        String expirationDateStr = sdf.format(claims.getExpiration());
+        return sdf.format(claims.getExpiration());
+    }
 
-        return expirationDateStr;
+    /**
+     * 토큰이 만료되었는지 확인
+     * true : 만료
+     * false : 토큰 살아있음
+     * */
+    public boolean isTokenExpired(String token) {
+        try {
+            Claims claims = getClaimsFromToken(token);
+            Date expirationDate = claims.getExpiration();
+            return expirationDate.before(new Date());
+        } catch (IllegalArgumentException e) {
+            return true;
+        }
+    }
+
+    // 토큰에서 Claims 추출
+    private Claims getClaimsFromToken(String token) {
+        try {
+            return Jwts.parser()
+                    .setSigningKey(secretKey)
+                    .parseClaimsJws(token)
+                    .getBody();
+        } catch (Exception e) {
+            throw new IllegalArgumentException("Invalid or expired token", e);
+        }
     }
 }

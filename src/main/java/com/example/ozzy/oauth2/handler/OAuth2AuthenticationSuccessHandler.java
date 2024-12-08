@@ -4,9 +4,9 @@ import com.example.ozzy.oauth2.HttpCookieOAuth2AuthorizationRequestRepository;
 import com.example.ozzy.oauth2.service.OAuth2UserPrincipal;
 import com.example.ozzy.oauth2.user.OAuth2Provider;
 import com.example.ozzy.oauth2.user.OAuth2UserUnlinkManager;
+import com.example.ozzy.oauth2.user.Token;
 import com.example.ozzy.oauth2.util.CookieUtils;
 import com.example.ozzy.oauth2.util.JwtTokenUtil;
-import com.example.ozzy.oauth2.user.Token;
 import com.example.ozzy.user.dto.request.UserRequest;
 import com.example.ozzy.user.service.UserService;
 import jakarta.servlet.http.Cookie;
@@ -20,7 +20,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.io.IOException;
-import java.util.Map;
 import java.util.Optional;
 
 import static com.example.ozzy.oauth2.HttpCookieOAuth2AuthorizationRequestRepository.MODE_PARAM_COOKIE_NAME;
@@ -77,9 +76,6 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
         }
 
         if ("login".equalsIgnoreCase(mode)) {
-            // TODO: DB 저장
-            // TODO: 액세스 토큰, 리프레시 토큰 발급
-            // TODO: 리프레시 토큰 DB 저장
 
             log.info("email={}, name={}, nickname={}, accessToken={}", principal.getUserInfo().getEmail(),
                     principal.getUserInfo().getName(),
@@ -107,8 +103,6 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
             final String accessToken = principal.getUserInfo().getAccessToken();
             OAuth2Provider provider = principal.getUserInfo().getProvider();
 
-            // TODO: DB 삭제
-            // TODO: 리프레시 토큰 삭제
             oAuth2UserUnlinkManager.unlink(provider, accessToken);
 
             return UriComponentsBuilder.fromUriString(targetUrl)

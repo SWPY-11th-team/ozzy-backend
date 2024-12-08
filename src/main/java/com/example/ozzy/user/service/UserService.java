@@ -9,10 +9,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.beans.Transient;
-import java.util.Date;
-import java.util.Map;
-
 @Service
 @RequiredArgsConstructor
 public class UserService {
@@ -35,6 +31,7 @@ public class UserService {
         userMapper.insertUser(userRequest);     // 사용자 저장
         RefreshTokenRequest refreshTokenRequest = new RefreshTokenRequest(token.getRefreshToken(), expirationDateFromToken, userRequest.getUserSeq());
         userMapper.insertRefreshToken(refreshTokenRequest);
+//        userMapper.insertServiceTerms(ServiceTermsRequest.firstAdd(userRequest.getUserSeq()));
     }
 
 }
