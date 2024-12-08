@@ -5,6 +5,8 @@ import com.example.ozzy.oauth2.util.CookieUtils;
 import com.example.ozzy.oauth2.util.JwtTokenUtil;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -29,7 +31,7 @@ public class UserController {
      *  refreshToken 으로 accessToken 재발급
      * */
     @PostMapping("/refresh-token")
-    public Token refreshAccessToken(@RequestBody Token token, HttpServletResponse response) {
+    public ResponseEntity<Token> refreshAccessToken(@RequestBody Token token, HttpServletResponse response) {
         String refreshToken = token.getRefreshToken();
 
         if (refreshToken == null || refreshToken.isEmpty()) {
@@ -43,7 +45,16 @@ public class UserController {
         Token reGenerateToken = jwtTokenUtil.reGenerateToken(refreshToken);
         CookieUtils.createCookieToken(reGenerateToken, response);
 
-        return reGenerateToken;
+        return new ResponseEntity<>(reGenerateToken, HttpStatus.OK);
+    }
+
+    /**
+     * 로그아읏
+     * */
+    @PostMapping("/logout")
+    public ResponseEntity<String> logout(HttpServletResponse response) {
+        CookieUtils.deleteUserCookie(response);
+        return ResponseEntity.ok("logout");
     }
 
 }

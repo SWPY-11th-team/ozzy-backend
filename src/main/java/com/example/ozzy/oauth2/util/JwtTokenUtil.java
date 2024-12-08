@@ -20,6 +20,7 @@ public class JwtTokenUtil {
 //    private static final long accessTokenValidity = 1000 * 10; // 10초
     private static final long accessTokenValidity = 1000 * 60;  // 1분
 //    private static final long accessTokenValidity = 1000 * 60 * 30; // 30분
+//    private static final long accessTokenValidity = 1000 * 60 * 60;  // 1시간
     private static final long refreshTokenValidity = 1000 * 60 * 60 * 24 * 7; // 7일
 
     // 로그인 발급
