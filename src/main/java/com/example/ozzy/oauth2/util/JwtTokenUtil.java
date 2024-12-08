@@ -5,13 +5,18 @@ import com.example.ozzy.oauth2.user.Token;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
+@Slf4j
 @Component
 public class JwtTokenUtil {
 
@@ -76,15 +81,20 @@ public class JwtTokenUtil {
     }
 
     // refreshToken에서 만료 날짜를 가져오는 방법
-    public String getExpirationDateFromToken(String token) {
+    public LocalDateTime getExpirationDateFromToken(String token) {
         Claims claims = Jwts.parser()
                 .setSigningKey(secretKey)
                 .parseClaimsJws(token)
                 .getBody();
 
+//        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+//        return sdf.format(claims.getExpiration());
 
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        return sdf.format(claims.getExpiration());
+        log.info("expired-Time: " + claims.getExpiration().toInstant().atZone(ZoneId.systemDefault()).toString());
+
+        return claims.getExpiration().toInstant()
+                .atZone(ZoneId.systemDefault()) // 시스템 기본 시간대
+                .toLocalDateTime();
     }
 
     /**

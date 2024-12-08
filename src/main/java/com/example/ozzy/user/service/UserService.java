@@ -10,6 +10,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
+
 @Service
 @RequiredArgsConstructor
 public class UserService {
@@ -27,7 +29,7 @@ public class UserService {
      * */
     @Transactional
     public void insertUser(UserRequest userRequest, Token token) {
-        String expirationDateFromToken = jwtTokenUtil.getExpirationDateFromToken(token.getRefreshToken());
+        LocalDateTime expirationDateFromToken = jwtTokenUtil.getExpirationDateFromToken(token.getRefreshToken());
 
         userMapper.insertUser(userRequest);     // 사용자 저장
         RefreshTokenRequest refreshTokenRequest = new RefreshTokenRequest(token.getRefreshToken(), expirationDateFromToken, userRequest.getUserSeq());
