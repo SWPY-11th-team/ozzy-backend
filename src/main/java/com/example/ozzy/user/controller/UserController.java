@@ -1,7 +1,9 @@
 package com.example.ozzy.user.controller;
 
 import com.example.ozzy.oauth2.user.Token;
+import com.example.ozzy.oauth2.util.CookieUtils;
 import com.example.ozzy.oauth2.util.JwtTokenUtil;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -27,7 +29,7 @@ public class UserController {
      *  refreshToken 으로 accessToken 재발급
      * */
     @PostMapping("/refresh-token")
-    public Token refreshAccessToken(@RequestBody Token token) {
+    public Token refreshAccessToken(@RequestBody Token token, HttpServletResponse response) {
         String refreshToken = token.getRefreshToken();
 
         if (refreshToken == null || refreshToken.isEmpty()) {
@@ -38,7 +40,10 @@ public class UserController {
             throw new IllegalArgumentException("Refresh token has expired. Please login again.");
         }
 
-        return jwtTokenUtil.reGenerateToken(refreshToken);
+        Token reGenerateToken = jwtTokenUtil.reGenerateToken(refreshToken);
+        CookieUtils.createCookieToken(reGenerateToken, response);
+
+        return reGenerateToken;
     }
 
 }

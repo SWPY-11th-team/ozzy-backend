@@ -101,7 +101,7 @@ public class JwtTokenUtil {
         }
     }
 
-    // 토큰에서 Claims 추출
+    // 토큰에서 사용자 정보 추출
     private Claims getClaimsFromToken(String token) {
         try {
             return Jwts.parser()

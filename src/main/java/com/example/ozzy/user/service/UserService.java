@@ -1,6 +1,7 @@
 package com.example.ozzy.user.service;
 
 import com.example.ozzy.oauth2.user.Token;
+import com.example.ozzy.oauth2.util.CookieUtils;
 import com.example.ozzy.oauth2.util.JwtTokenUtil;
 import com.example.ozzy.user.dto.request.RefreshTokenRequest;
 import com.example.ozzy.user.dto.request.UserRequest;

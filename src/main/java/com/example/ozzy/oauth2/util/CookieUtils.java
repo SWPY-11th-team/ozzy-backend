@@ -1,5 +1,6 @@
 package com.example.ozzy.oauth2.util;
 
+import com.example.ozzy.oauth2.user.Token;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -56,4 +57,19 @@ public class CookieUtils {
         return cls.cast(SerializationUtils.deserialize(
                 Base64.getUrlDecoder().decode(cookie.getValue())));
     }
+
+    public static void createCookieToken(Token token, HttpServletResponse response) {
+        Cookie accessTokenCookie = new Cookie("accessToken", token.getAccessToken());
+        accessTokenCookie.setHttpOnly(true);    // // JavaScript에서 접근 불가
+        accessTokenCookie.setPath("/"); // 모든경로 접속 가능
+        accessTokenCookie.setMaxAge(60 * 60);   // 1시간
+        response.addCookie(accessTokenCookie);
+
+        Cookie refreshTokenCookie = new Cookie("refreshToken", token.getRefreshToken());
+        refreshTokenCookie.setHttpOnly(true);
+        refreshTokenCookie.setPath("/");
+        refreshTokenCookie.setMaxAge(60 * 60 * 24 * 7); // 7일
+        response.addCookie(refreshTokenCookie);
+    }
+
 }
