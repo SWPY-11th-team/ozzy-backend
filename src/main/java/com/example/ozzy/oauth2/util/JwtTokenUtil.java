@@ -8,10 +8,8 @@ import io.jsonwebtoken.SignatureAlgorithm;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
-import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -23,9 +21,9 @@ public class JwtTokenUtil {
     // todo value application 이동 , !! HS512에 적합한 비밀 키 재 생성
     private static final String secretKey = "I4u+zERuz0fEHWx5qYN1guJ4gRUzIxdwyy+qHtM3V4LRO2WVtYVcnFw1E5fhtEvQfH8HMyhChCz3csQsdbZcXw==";
 //    private static final long accessTokenValidity = 1000 * 10; // 10초
-    private static final long accessTokenValidity = 1000 * 60;  // 1분
+//    private static final long accessTokenValidity = 1000 * 60;  // 1분
 //    private static final long accessTokenValidity = 1000 * 60 * 30; // 30분
-//    private static final long accessTokenValidity = 1000 * 60 * 60;  // 1시간
+    private static final long accessTokenValidity = 1000 * 60 * 60;  // 1시간
     private static final long refreshTokenValidity = 1000 * 60 * 60 * 24 * 7; // 7일
 
     // 로그인 발급
@@ -44,7 +42,7 @@ public class JwtTokenUtil {
 
     // 재발급
     public Token reGenerateToken(String token) {
-        Claims user = getClaimsFromToken(token);
+        Claims user = getClaims(token);
 
         Map<String, Object> claims = new HashMap<>();
         claims.put("userSeq", user.get("userSeq"));
@@ -101,7 +99,7 @@ public class JwtTokenUtil {
      * */
     public boolean isTokenExpired(String token) {
         try {
-            Claims claims = getClaimsFromToken(token);
+            Claims claims = getClaims(token);
             Date expirationDate = claims.getExpiration();
             return expirationDate.before(new Date());
         } catch (IllegalArgumentException e) {
@@ -110,12 +108,25 @@ public class JwtTokenUtil {
     }
 
     // 토큰에서 사용자 정보 추출
-    private Claims getClaimsFromToken(String token) {
+    private Claims getClaims(String token) {
         try {
             return Jwts.parser()
                     .setSigningKey(secretKey)
                     .parseClaimsJws(token)
                     .getBody();
+        } catch (Exception e) {
+            throw new IllegalArgumentException("Invalid or expired token", e);
+        }
+    }
+
+    public int getUserId(String token) {
+        try {
+            return Jwts.parser()
+                    .setSigningKey(secretKey)
+                    .parseClaimsJws(token)
+                    .getBody()
+                    .get("userSeq")
+                    .hashCode();
         } catch (Exception e) {
             throw new IllegalArgumentException("Invalid or expired token", e);
         }
