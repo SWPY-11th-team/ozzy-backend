@@ -57,4 +57,11 @@
         )
     </insert>
 
+    <select id="findUserId" parameterType="com.example.ozzy.user.dto.request.UserRequest" resultType="com.example.ozzy.user.dto.response.UserResponse">
+        SELECT USER_SEQ FROM OZZY.USERS
+        WHERE 1=1
+          AND EMAIL = #{email}
+          AND PROVIDER = #{provider}
+    </select>
+
 </mapper>

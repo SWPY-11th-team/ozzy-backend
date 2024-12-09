@@ -87,9 +87,6 @@ public class JwtTokenUtil {
                 .parseClaimsJws(token)
                 .getBody();
 
-//        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-//        return sdf.format(claims.getExpiration());
-
         log.info("expired-Time: " + claims.getExpiration().toInstant().atZone(ZoneId.systemDefault()).toString());
 
         return claims.getExpiration().toInstant()

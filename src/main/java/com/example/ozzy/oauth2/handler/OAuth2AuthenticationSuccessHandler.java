@@ -7,7 +7,9 @@ import com.example.ozzy.oauth2.user.OAuth2UserUnlinkManager;
 import com.example.ozzy.oauth2.user.Token;
 import com.example.ozzy.oauth2.util.CookieUtils;
 import com.example.ozzy.oauth2.util.JwtTokenUtil;
+import com.example.ozzy.user.dto.request.RefreshTokenRequest;
 import com.example.ozzy.user.dto.request.UserRequest;
+import com.example.ozzy.user.dto.response.UserResponse;
 import com.example.ozzy.user.service.UserService;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
@@ -20,6 +22,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 import static com.example.ozzy.oauth2.HttpCookieOAuth2AuthorizationRequestRepository.MODE_PARAM_COOKIE_NAME;
@@ -76,30 +79,63 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
         }
 
         if ("login".equalsIgnoreCase(mode)) {
-
-            log.info("email={}, name={}, nickname={}, accessToken={}", principal.getUserInfo().getEmail(),
+            log.info("email={}, name={}, provider={}, nickname={}, accessToken={}",
+                    principal.getUserInfo().getEmail(),
+                    principal.getUserInfo().getProvider(),
                     principal.getUserInfo().getName(),
                     principal.getUserInfo().getNickname(),
-                    principal.getUserInfo().getAccessToken()
-            );
+                    principal.getUserInfo().getAccessToken());
 
+            // 기존 사용자 처리
+            int userId = userService.findUser(principal);
+            Token token;
+
+            if (userId != 0) {  // 기존 사용자
+                log.info("기존 사용자");
+
+                // 기존 사용자의 정보를 바탕으로 토큰 발급
+                token = jwtTokenUtil.generateToken(userId, principal);
+
+                // RefreshToken 저장
+                LocalDateTime expirationDateFromToken = jwtTokenUtil.getExpirationDateFromToken(token.getRefreshToken());
+                RefreshTokenRequest refreshTokenRequest = new RefreshTokenRequest(token.getRefreshToken(), expirationDateFromToken, userId);
+                userService.insertRefreshToken(refreshTokenRequest);  // 기존 사용자에게도 Refresh Token 저장
+
+                log.info("accessToken : {}", token.getAccessToken());
+                log.info("refreshToken : {}", token.getRefreshToken());
+
+                // 쿠키에 토큰 저장
+                CookieUtils.createCookieToken(token, response);
+
+                return UriComponentsBuilder.fromUriString(targetUrl)
+                        .queryParam("accessToken", token.getAccessToken())
+                        .queryParam("refreshToken", token.getRefreshToken())
+                        .build().toUriString();
+            }
+
+            // 신규 사용자 처리
             int seq = userService.getNextUserSeq();
             UserRequest userRequest = UserRequest.add(seq, principal);
-            Token token = jwtTokenUtil.generateToken(seq, principal);
 
-            log.info("accessToken : {}", token.getAccessToken());
-            log.info("refreshToken : {}", token.getRefreshToken());
-            log.info("provider : {}", principal.getUserInfo().getProvider());
+            // 토큰 발급
+            token = jwtTokenUtil.generateToken(seq, principal);
 
+            log.info("new accessToken : {}", token.getAccessToken());
+            log.info("new refreshToken : {}", token.getRefreshToken());
+            log.info("new provider : {}", principal.getUserInfo().getProvider());
+
+            // 신규 사용자 저장 및 Refresh Token 저장
             userService.insertUser(userRequest, token);
+
+            // 쿠키에 토큰 저장
             CookieUtils.createCookieToken(token, response);
 
             return UriComponentsBuilder.fromUriString(targetUrl)
-//                    .queryParam("accessToken", token.getAccessToken())
-//                    .queryParam("refreshToken", token.getRefreshToken())
+                    .queryParam("accessToken", token.getAccessToken())
+                    .queryParam("refreshToken", token.getRefreshToken())
                     .build().toUriString();
-
-        } else if ("logout".equalsIgnoreCase(mode)) {
+        }
+        else if ("logout".equalsIgnoreCase(mode)) {
 
             final String accessToken = principal.getUserInfo().getAccessToken();
             OAuth2Provider provider = principal.getUserInfo().getProvider();

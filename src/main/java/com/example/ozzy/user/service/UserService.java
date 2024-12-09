@@ -1,16 +1,19 @@
 package com.example.ozzy.user.service;
 
+import com.example.ozzy.oauth2.service.OAuth2UserPrincipal;
 import com.example.ozzy.oauth2.user.Token;
 import com.example.ozzy.oauth2.util.CookieUtils;
 import com.example.ozzy.oauth2.util.JwtTokenUtil;
 import com.example.ozzy.user.dto.request.RefreshTokenRequest;
 import com.example.ozzy.user.dto.request.UserRequest;
+import com.example.ozzy.user.dto.response.UserResponse;
 import com.example.ozzy.user.mapper.UserMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -32,9 +35,17 @@ public class UserService {
         LocalDateTime expirationDateFromToken = jwtTokenUtil.getExpirationDateFromToken(token.getRefreshToken());
 
         userMapper.insertUser(userRequest);     // 사용자 저장
-        RefreshTokenRequest refreshTokenRequest = new RefreshTokenRequest(token.getRefreshToken(), expirationDateFromToken, userRequest.getUserSeq());
+        insertRefreshToken(new RefreshTokenRequest(token.getRefreshToken(), expirationDateFromToken, userRequest.getUserSeq()));    // refreshToken 발급
+//        userMapper.insertServiceTerms(ServiceTermsRequest.firstAdd(userRequest.getUserSeq()));    // todo 여기서 할까 말까..
+    }
+
+    public void insertRefreshToken(RefreshTokenRequest refreshTokenRequest) {
         userMapper.insertRefreshToken(refreshTokenRequest);
-//        userMapper.insertServiceTerms(ServiceTermsRequest.firstAdd(userRequest.getUserSeq()));
+    }
+
+    public int findUser(OAuth2UserPrincipal principal) {
+        Optional<UserResponse> userId = userMapper.findUserId(UserRequest.find(principal.getUserInfo().getEmail(), principal.getUserInfo().getProvider().toString()));
+        return userId.map(UserResponse::getUserSeq).orElse(0);
     }
 
 }

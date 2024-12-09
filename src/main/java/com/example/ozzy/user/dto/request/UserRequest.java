@@ -26,4 +26,8 @@ public class UserRequest {
         );
     }
 
+    public static UserRequest find(String email, String provider) {
+        return new UserRequest(0, null, provider, email);
+    }
+
 }
