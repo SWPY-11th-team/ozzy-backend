@@ -1,5 +1,7 @@
 package com.example.ozzy.user.service;
 
+import com.example.ozzy.common.exception.domain.CommonException;
+import com.example.ozzy.common.exception.enums.ExceptionType;
 import com.example.ozzy.oauth2.service.OAuth2UserPrincipal;
 import com.example.ozzy.oauth2.user.Token;
 import com.example.ozzy.oauth2.util.JwtTokenUtil;
@@ -45,6 +47,21 @@ public class UserService {
     public int findUser(OAuth2UserPrincipal principal) {
         Optional<UserResponse> userId = userMapper.findUserId(UserRequest.find(principal.getUserInfo().getEmail(), principal.getUserInfo().getProvider().toString()));
         return userId.map(UserResponse::getUserSeq).orElse(0);
+    }
+
+    public UserResponse selectUserInfo() {
+        // UserContext.getUserId();
+        return userMapper.selectUserInfo(90);
+    }
+
+    public void updateUserName(UserRequest user) {
+
+        if (user.getNickName().isEmpty()) {
+            throw new CommonException(ExceptionType.USER_NICK_NAME);
+        }
+
+        // UserContext.getUserId();
+        userMapper.updateUserName(UserRequest.updateName(90, user.getNickName()));
     }
 
 }

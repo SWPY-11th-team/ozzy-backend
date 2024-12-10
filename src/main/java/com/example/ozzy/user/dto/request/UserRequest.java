@@ -30,4 +30,8 @@ public class UserRequest {
         return new UserRequest(0, null, provider, email);
     }
 
+    public static UserRequest updateName(int seq, String name) {
+        return new UserRequest(seq, name, null, null);
+    }
+
 }

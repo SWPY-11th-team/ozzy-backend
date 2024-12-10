@@ -5,6 +5,7 @@ import com.example.ozzy.user.dto.request.ServiceTermsRequest;
 import com.example.ozzy.user.dto.request.UserRequest;
 import com.example.ozzy.user.dto.response.UserResponse;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.Optional;
 
@@ -15,4 +16,6 @@ public interface UserMapper {
     int insertRefreshToken(RefreshTokenRequest request);
     int insertServiceTerms(ServiceTermsRequest request);
     Optional<UserResponse> findUserId(UserRequest request);
+    UserResponse selectUserInfo(@Param("seq") int seq);
+    int updateUserName(UserRequest request);
 }

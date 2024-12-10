@@ -64,4 +64,22 @@
           AND PROVIDER = #{provider}
     </select>
 
+    <select id="selectUserInfo" parameterType="int" resultType="com.example.ozzy.user.dto.response.UserResponse">
+        SELECT
+            USER_SEQ
+            ,NICKNAME
+            ,PROVIDER
+            ,EMAIL
+        FROM OZZY.USERS
+            WHERE 1=1
+            AND USER_SEQ = #{seq}
+    </select>
+
+    <update id="updateUserName" parameterType="com.example.ozzy.user.dto.request.UserRequest">
+        UPDATE OZZY.USERS
+        SET
+            NICKNAME = #{nickName}
+        WHERE USER_SEQ = #{userSeq}
+    </update>
+
 </mapper>
