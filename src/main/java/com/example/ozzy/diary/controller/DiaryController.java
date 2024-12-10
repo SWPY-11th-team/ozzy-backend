@@ -26,9 +26,9 @@ public class DiaryController {
     // 일기 감정 분석 및 문장 나누기
     @PostMapping("/split")
     public ResponseEntity<String> split() {
-        diaryService.split();
+        String str = diaryService.split();
 
-        return new ResponseEntity<>(HttpStatus.OK);
+        return new ResponseEntity<>(str, HttpStatus.OK);
     }
 
 }

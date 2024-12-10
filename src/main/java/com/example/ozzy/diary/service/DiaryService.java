@@ -82,7 +82,7 @@ public class DiaryService {
         System.out.println("response = " + response);
         System.out.println("response = " + response.getBody());
 
-        return null;
+        return response.getBody();
     }
 
     private HttpHeaders headers() {
