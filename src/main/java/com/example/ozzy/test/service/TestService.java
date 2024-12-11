@@ -10,7 +10,10 @@ public class TestService {
 
     private final TestMapper testMapper;
 
-    public void first() {
-        System.out.println("TestService.first");
+    public int first() {
+        int i = testMapper.selectOne();
+        System.out.println("TestService.first select DB ==> " + i);
+
+        return i;
     }
 }
