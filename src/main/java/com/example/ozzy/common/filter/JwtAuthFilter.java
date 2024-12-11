@@ -22,9 +22,9 @@ public class JwtAuthFilter implements Filter {
 //        if (jwtTokenUtil.isTokenExpired(token)) {
 //            throw new IllegalArgumentException("Refresh token has expired. Please login again.");
 //        }
-//
+
 //        int userId = jwtTokenUtil.getUserId(token);
-//        UserContext.setUserId(userId);
+        UserContext.setUserId(90);
 
         chain.doFilter(request, response);
     }
