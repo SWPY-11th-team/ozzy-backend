@@ -7,6 +7,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 public class OzzyApplication {
 
 	public static void main(String[] args) {
+		System.out.println("OzzyApplication.main start");
 		SpringApplication.run(OzzyApplication.class, args);
 	}
 
