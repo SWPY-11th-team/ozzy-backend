@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.ozzy.user.mapper.DiaryMapper">
+
+    <insert id="saveDiary" parameterType="com.example.ozzy.diary.entity.Diary">
+        INSERT INTO OZZY.DIARY (USER_SEQ, DIARY_DATE, ADD_EMOTION_SEQ, EMOTION_CARD_SEQ, TITLE, CONTENT, CREATE_AT, UPDATE_AT)
+        VALUES (#{userSeq}, #{diaryDate}, #{addEmotionSeq}, #{emotionCardSeq}, #{title}, #{content}, #{createAt}, #{updateAt})
+    </insert>
+
+    <select id="getDiaryByUserAndDate" parameterType="map" resultType="com.example.ozzy.diary.entity.Diary">
+        SELECT * FROM OZZY.DIARY
+        WHERE USER_SEQ = #{userSeq} AND DIARY_DATE = TO_TIMESTAMP(#{diaryDate}, 'YYYY-MM-DD HH24:MI:SS')
+    </select>
+
+</mapper>

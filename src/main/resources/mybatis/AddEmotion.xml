@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.ozzy.addemotion.mapper.AddEmotionMapper">
+
+    <insert id="saveAddEmotion" parameterType="com.example.ozzy.addemotion.entity.AddEmotion">
+        INSERT INTO OZZY.ADD_EMOTION (ADD_EMOTION_SEQ, EMOTIONS, CREATE_AT, UPDATE_AT)
+        VALUES (OZZY.ADD_EMOTION_SEQ.NEXTVAL, #{emotions}, #{createAt}, #{updateAt})
+    </insert>
+
+</mapper>

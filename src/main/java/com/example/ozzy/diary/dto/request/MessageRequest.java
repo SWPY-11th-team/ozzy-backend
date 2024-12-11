@@ -12,7 +12,7 @@ import java.util.List;
 @ToString
 public class MessageRequest {
 
-    private List<Message> messages;
+    private List<Message> messages = new ArrayList<>();
     private double topP;
     private int topK;
     private int maxTokens;
