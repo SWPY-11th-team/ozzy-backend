@@ -21,7 +21,7 @@ public class DiaryController {
     @PostMapping("/add")
     public ResponseEntity<DefaultResponse<String>> add(@RequestBody DiaryRequest diaryRequest) throws JsonProcessingException {
         System.out.println("DiaryController.add");
-
+        System.out.println("diaryRequest = " + diaryRequest);
         // 일기 저장
         try {
             diaryService.saveDiary(diaryRequest);

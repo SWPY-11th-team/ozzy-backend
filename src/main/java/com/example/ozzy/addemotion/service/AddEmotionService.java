@@ -16,12 +16,11 @@ public class AddEmotionService {
         this.addEmotionMapper = addEmotionMapper;
     }
 
-    @Transactional
     public int saveAddEmotion() {
         AddEmotion addEmotion = new AddEmotion();
         addEmotion.setEmotions("");
-        addEmotion.setCreateAt(LocalDateTime.now()); // 현재 시간으로 설정
-        addEmotion.setUpdateAt(LocalDateTime.now()); // 현재 시간으로 설정
+//        addEmotion.setCreateAt(LocalDateTime.now()); // 현재 시간으로 설정
+//        addEmotion.setUpdateAt(LocalDateTime.now()); // 현재 시간으로 설정
 
         addEmotionMapper.saveAddEmotion(addEmotion); // ADD_EMOTION 저장
 

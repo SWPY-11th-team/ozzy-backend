@@ -15,6 +15,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
 import java.time.LocalDateTime;
@@ -36,16 +37,17 @@ public class EmotionCardService {
     private static final String SYSTEM_MESSAGE_EMOTION = "- 사용자가 문장을 입력하면 감정 분석 결과를 응답합니다. \n- 감정 분석은 사용자의 문장에 대해 진행합니다. 문장의 감정은 {\"기쁨\", \"슬픔\", \"놀람\", \"분노\", \"공포\", \"나쁨\", \"중립\"} 7가지 중 하나로 분류합니다. 반드시 7개의 감정 중 하나로만 분류합니다. 분류 시 softmax 함수를 활용하며, 임계값은 0.4로 지정합니다. 모든 감정 확률이 임계값 이하라면, \"중립\"으로 처리합니다. \n- 아래 예시를 참고합니다. 답변은 항상 아래 예시와 같은 포맷으로 나와야합니다.\n\n###\n사용자: 어제 새벽에 유튜브를 보느라 늦게 자버렸다.\noutput: 중립\n\n사용자: 그래서 오늘 오후 4시까지 늦잠을 잤다.\noutput: 중립\n\n사용자: 오늘은 한진 역량검사를 봐야 해서 마음이 약간 조급했지만, 일단 밥을 먹고 역량검사를 준비했다.\noutput: 공포\n\n사용자: 역량검사는 원래 보던 유형이 아니라 약간 당황했지만, 그래도 어느 정도 잘 본 것 같다.\noutput: 기쁨\n\n사용자: 그리고 내일은 다음 주 면접 때 입고 갈 정장을 대여하러 가야 한다.\noutput: 중립\n\n사용자: 흑흑 슬프다.\noutput: 슬픔.";
     private final ObjectMapperUtil objectMapperUtil;
 
-    @Transactional
-    public int saveEmotionCard () {
-      EmotionCard emotionCard = new EmotionCard();
-      emotionCard.setIsAnalyzed("N");
-      emotionCard.setCreateAt(LocalDateTime.now());
-      emotionCard.setUpdateAt(LocalDateTime.now());
+    public int saveEmotionCard() {
+        EmotionCard emotionCard = new EmotionCard();
+        emotionCard.setIsAnalyzed("N");
+        emotionCard.setReply("");
+//      emotionCard.setCreateAt(LocalDateTime.now());
+//      emotionCard.setUpdateAt(LocalDateTime.now());
 
-      emotionCardMapper.saveEmotionCard(emotionCard);
+        emotionCardMapper.saveEmotionCard(emotionCard);
+        System.out.println("emotionCard = " + emotionCard);
 
-      return emotionCard.getEmotionCardSeq();
+        return emotionCard.getEmotionCardSeq();
     }
 
     public EmotionAnalysisResponse getEmotionAnalysis(int emtionCardSeq) {
@@ -64,7 +66,7 @@ public class EmotionCardService {
         emotionCounts.put("surprised", emotionCard.getSurprised());
         emotionCounts.put("angry", emotionCard.getAngry());
         emotionCounts.put("fearful", emotionCard.getFearful());
-        emotionCounts.put("bad", emotionCard.getBad());
+        emotionCounts.put("bad", emotionCard.getDisgusted());
 
         int totalSentences = calculateTotalSentences(emotionCounts) + emotionCard.getNeutrality();
 
@@ -138,11 +140,13 @@ public class EmotionCardService {
         Map<String, Integer> emotionCounts = initializeEmotionCounts();
         analyzeSentenceEmotions(sentences, emotionCounts);
 
-
         updateEmotionCard(diary.getEmotionCardSeq(), reply, emotionCounts);
     }
 
     private void updateEmotionCard(int emotionCardSeq, String reply, Map<String, Integer> emotionCounts) {
+
+        System.out.println("reply = " + reply);
+
         EmotionCard emotionCard = new EmotionCard();
         emotionCard.setEmotionCardSeq(emotionCardSeq);
         emotionCard.setIsAnalyzed("Y");
@@ -152,12 +156,18 @@ public class EmotionCardService {
         emotionCard.setSurprised(emotionCounts.get("놀람"));
         emotionCard.setAngry(emotionCounts.get("분노"));
         emotionCard.setFearful(emotionCounts.get("공포"));
-        emotionCard.setBad(emotionCounts.get("나쁨"));
+        emotionCard.setDisgusted(emotionCounts.get("나쁨"));
         emotionCard.setNeutrality(emotionCounts.get("중립"));
-        emotionCard.setUpdateAt(LocalDateTime.now());
+//        emotionCard.setUpdateAt(LocalDateTime.now());
+
+        System.out.println("emotionCard = " + emotionCard);
 
         // EMOTION_CARD 업데이트
-        emotionCardMapper.updateEmotionCard(emotionCard);
+        try {
+            emotionCardMapper.updateEmotionCard(emotionCard);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     private String getReplyAndSplitSentences(String userDiary) {
@@ -169,10 +179,17 @@ public class EmotionCardService {
     }
 
     private String sendRequest(MessageRequest messageRequest) {
-        HttpHeaders headers = createHeaders();
-        HttpEntity<MessageRequest> entity = new HttpEntity<>(messageRequest, headers);
-        ResponseEntity<String> response = restTemplate.exchange(HOST, HttpMethod.POST, entity, String.class);
-        return response.getBody();
+        try {
+            HttpHeaders headers = createHeaders();
+            HttpEntity<MessageRequest> entity = new HttpEntity<>(messageRequest, headers);
+            ResponseEntity<String> response = restTemplate.exchange(HOST, HttpMethod.POST, entity, String.class);
+            return response.getBody();
+        } catch (Exception e) {
+            System.out.println("EmotionCardService.sendRequest");
+            System.out.println("e = " + e);
+        }
+        System.out.println("EmotionCardService.sendRequest 여기냐!!");
+        return "일기 ai 답변이니?";
     }
 
     private HttpHeaders createHeaders() {

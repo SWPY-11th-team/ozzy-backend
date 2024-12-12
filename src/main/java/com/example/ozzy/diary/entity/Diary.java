@@ -2,11 +2,13 @@ package com.example.ozzy.diary.entity;
 
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 
 import java.time.LocalDateTime;
 
 @Getter
 @Setter
+@ToString
 public class Diary {
     private int userSeq; // 사용자 식별자
     private LocalDateTime diaryDate; // 작성일

@@ -15,6 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 
 @Service
 public class DiaryService {
@@ -29,38 +30,34 @@ public class DiaryService {
         this.addEmotionService = addEmotionService;
     }
 
-    @Transactional
     public void saveDiary(DiaryRequest diaryRequest) throws JsonProcessingException {
         Diary diary = new Diary();
 
-        ZonedDateTime kstNow = ZonedDateTime.now(ZoneId.of("Asia/Seoul"));
+//        ZonedDateTime kstNow = ZonedDateTime.now(ZoneId.of("Asia/Seoul"));
+
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS");
+        LocalDateTime dateTime = LocalDateTime.parse(diaryRequest.getDiaryDate(), formatter);
 
         diary.setUserSeq(diaryRequest.getUserSeq());
-        diary.setDiaryDate(LocalDateTime.parse(diaryRequest.getDiaryDate()));
+        diary.setDiaryDate(dateTime);
         diary.setTitle(diaryRequest.getTitle());
         diary.setContent(diaryRequest.getContent());
-        diary.setCreateAt(kstNow.toLocalDateTime());
-        diary.setUpdateAt(kstNow.toLocalDateTime());
+//        diary.setCreateAt(kstNow.toLocalDateTime());
+//        diary.setUpdateAt(kstNow.toLocalDateTime());
 
         // EMOTION_CARD()를 생성하고 diary의 EMOTION_CARD_SEQ 추가;
         int emotionCardSeq = emotionCardService.saveEmotionCard();
         diary.setEmotionCardSeq(emotionCardSeq);
 
         // ADD_EMOTION()를 생성하고 diary의 ADD_EMOTION_SEQ 추가;
-        int addEmotionSeq = addEmotionService.saveAddEmotion();
-        diary.setAddEmotionSeq(addEmotionSeq);
+        addEmotionService.saveAddEmotion();
 
-        try {
-            diaryMapper.saveDiary(diary);
-        } catch (Exception e) {
-            // 에러 처리
-        }
+        diaryMapper.saveDiary(diary);
 
         // 비동기로 analyzeDiary 호출
         analyzeDiary(diary);
     }
 
-    @Async
     public void analyzeDiary(Diary diary) throws JsonProcessingException {
         emotionCardService.analyzeDiary(diary);
     }
