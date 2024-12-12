@@ -11,6 +11,7 @@ import com.example.ozzy.emotioncard.service.EmotionCardService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
@@ -30,11 +31,13 @@ public class DiaryService {
     public void saveDiary(DiaryRequest diaryRequest) throws JsonProcessingException {
         Diary diary = new Diary();
 
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS");
-        LocalDateTime dateTime = LocalDateTime.parse(diaryRequest.getDiaryDate(), formatter);
+//        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("YYYY-MM-dd");
+//        LocalDateTime dateTime = LocalDateTime.parse(diaryRequest.getDiaryDate(), formatter);
+
+        LocalDate date = LocalDate.parse(diaryRequest.getDiaryDate(), DateTimeFormatter.ofPattern("yyyy-MM-dd"));
 
         diary.setUserSeq(UserContext.getUserId());
-        diary.setDiaryDate(dateTime);
+        diary.setDiaryDate(date);
         diary.setTitle(diaryRequest.getTitle());
         diary.setContent(diaryRequest.getContent());
 
