@@ -8,13 +8,9 @@ import com.example.ozzy.diary.entity.Diary;
 import com.example.ozzy.diary.mapper.DiaryMapper;
 import com.example.ozzy.emotioncard.service.EmotionCardService;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 
 @Service
@@ -33,8 +29,6 @@ public class DiaryService {
     public void saveDiary(DiaryRequest diaryRequest) throws JsonProcessingException {
         Diary diary = new Diary();
 
-//        ZonedDateTime kstNow = ZonedDateTime.now(ZoneId.of("Asia/Seoul"));
-
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS");
         LocalDateTime dateTime = LocalDateTime.parse(diaryRequest.getDiaryDate(), formatter);
 
@@ -42,15 +36,14 @@ public class DiaryService {
         diary.setDiaryDate(dateTime);
         diary.setTitle(diaryRequest.getTitle());
         diary.setContent(diaryRequest.getContent());
-//        diary.setCreateAt(kstNow.toLocalDateTime());
-//        diary.setUpdateAt(kstNow.toLocalDateTime());
 
         // EMOTION_CARD()를 생성하고 diary의 EMOTION_CARD_SEQ 추가;
         int emotionCardSeq = emotionCardService.saveEmotionCard();
         diary.setEmotionCardSeq(emotionCardSeq);
 
         // ADD_EMOTION()를 생성하고 diary의 ADD_EMOTION_SEQ 추가;
-        addEmotionService.saveAddEmotion();
+        int addEmotionSeq = addEmotionService.saveAddEmotion();
+        diary.setAddEmotionSeq(addEmotionSeq);
 
         diaryMapper.saveDiary(diary);
 
