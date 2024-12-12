@@ -1,6 +1,7 @@
 package com.example.ozzy.diary.service;
 
 import com.example.ozzy.addemotion.service.AddEmotionService;
+import com.example.ozzy.common.UserContext;
 import com.example.ozzy.common.exception.domain.CommonException;
 import com.example.ozzy.diary.dto.request.DiaryRequest;
 import com.example.ozzy.diary.dto.response.DiaryResponse;
@@ -32,7 +33,7 @@ public class DiaryService {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS");
         LocalDateTime dateTime = LocalDateTime.parse(diaryRequest.getDiaryDate(), formatter);
 
-        diary.setUserSeq(diaryRequest.getUserSeq());
+        diary.setUserSeq(UserContext.getUserId());
         diary.setDiaryDate(dateTime);
         diary.setTitle(diaryRequest.getTitle());
         diary.setContent(diaryRequest.getContent());

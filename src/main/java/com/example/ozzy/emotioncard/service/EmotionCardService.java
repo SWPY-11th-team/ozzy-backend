@@ -163,8 +163,6 @@ public class EmotionCardService {
         emotionCard.setNeutrality(emotionCounts.get("중립"));
 //        emotionCard.setUpdateAt(LocalDateTime.now());
 
-        System.out.println("emotionCard = " + emotionCard);
-
         // EMOTION_CARD 업데이트
         try {
             emotionCardMapper.updateEmotionCard(emotionCard);
