@@ -34,11 +34,9 @@ public class DiaryController {
 
     @GetMapping("/get")
     public ResponseEntity<?> getDiary(@RequestParam String diaryDate) {
-        // JWT에서 userSeq 추출해야함
-        int userSeq = 90;
 
         try {
-            DiaryResponse diaryResponse = diaryService.getDiary(userSeq, diaryDate);
+            DiaryResponse diaryResponse = diaryService.getDiary(diaryDate);
             return ResponseEntity.ok(diaryResponse);
         } catch (CommonException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());

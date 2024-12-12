@@ -56,8 +56,9 @@ public class DiaryService {
         emotionCardService.analyzeDiary(diary);
     }
 
-    public DiaryResponse getDiary(int userSeq, String diaryDate) {
-        Diary diary = diaryMapper.getDiaryByUserAndDate(userSeq, diaryDate);
+    public DiaryResponse getDiary(String diaryDate) {
+
+        Diary diary = diaryMapper.getDiaryByUserAndDate(UserContext.getUserId(), diaryDate);
         if (diary == null) {
             throw new CommonException("일기를 찾을 수 없습니다.", 404);
         }
