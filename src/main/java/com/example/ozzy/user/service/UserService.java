@@ -1,5 +1,6 @@
 package com.example.ozzy.user.service;
 
+import com.example.ozzy.common.UserContext;
 import com.example.ozzy.common.exception.domain.CommonException;
 import com.example.ozzy.common.exception.enums.ExceptionType;
 import com.example.ozzy.oauth2.service.OAuth2UserPrincipal;
@@ -50,8 +51,8 @@ public class UserService {
     }
 
     public UserResponse selectUserInfo() {
-        // UserContext.getUserId();
-        return userMapper.selectUserInfo(90);
+        int userId = UserContext.getUserId();
+        return userMapper.selectUserInfo(userId);
     }
 
     public void updateUserName(UserRequest user) {

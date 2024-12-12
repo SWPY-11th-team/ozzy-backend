@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Getter
@@ -11,7 +12,7 @@ import java.time.LocalDateTime;
 @ToString
 public class Diary {
     private int userSeq; // 사용자 식별자
-    private LocalDateTime diaryDate; // 작성일
+    private LocalDate diaryDate; // 작성일
     private String title; // 일기 제목
     private String content; // 일기 내용
     private int addEmotionSeq; // Add Emotion PK
