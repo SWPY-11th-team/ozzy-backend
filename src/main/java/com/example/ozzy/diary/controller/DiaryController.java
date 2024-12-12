@@ -39,11 +39,14 @@ public class DiaryController {
 
     @GetMapping("/get")
     public ResponseEntity<?> getDiary(@RequestParam String diaryDate) {
-        int userSeq = UserContext.getUserId();
+        if (!diaryDate.matches("\\d{4}-\\d{2}-\\d{2}")) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(new DefaultResponse<>("잘못된 날짜 형식입니다. ex) yyyy-MM-dd", HttpStatus.BAD_REQUEST.value()));
+        }
 
         // 일기 조회
         try {
-            DiaryResponse diaryResponse = diaryService.getDiary(userSeq, diaryDate);
+            DiaryResponse diaryResponse = diaryService.getDiary(diaryDate);
             return ResponseEntity.ok(diaryResponse);
         } catch (CommonException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new DefaultResponse<>(e.getMessage(), e.getCode(), null));

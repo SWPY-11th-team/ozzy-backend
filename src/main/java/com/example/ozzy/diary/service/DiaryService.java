@@ -36,7 +36,6 @@ public class DiaryService {
         int userId = UserContext.getUserId();
         LocalDate diaryDate = parseDiaryDate(diaryRequest.getDiaryDate());
         Diary checkDiary = getExistingDiary(userId, diaryDate);
-        System.out.println(checkDiary);
 
         if(checkDiary != null) {
             throw new CommonException("해당 일자에 작성된 일기가 있습니다. 수정을 이용하거나, 삭제 후 새로운 일기를 작성해주세요.", 409);
@@ -53,7 +52,6 @@ public class DiaryService {
         int userId = UserContext.getUserId();
         LocalDate dateTime = parseDiaryDate(diaryRequest.getDiaryDate());
         Diary existingDiary = getExistingDiary(userId, dateTime);
-        System.out.println(existingDiary);
 
         if(existingDiary == null) {
             throw new CommonException("해당 일자에 작성한 일기가 없습니다.", 404);
@@ -67,7 +65,7 @@ public class DiaryService {
     }
 
     // 일기 조회
-    public DiaryResponse getDiary(int userSeq, String diaryDate) {
+    public DiaryResponse getDiary(String diaryDate) {
         int userId = UserContext.getUserId();
         Diary diary = getExistingDiary(userId, parseDiaryDate(diaryDate));
 
@@ -105,8 +103,8 @@ public class DiaryService {
     }
 
     // 일기 정보 확인
-    private Diary getExistingDiary(int userId, LocalDate dateTime) {
-        return diaryMapper.getDiaryByUserAndDate(userId, dateTime);
+    private Diary getExistingDiary(int userSeq, LocalDate diaryDate) {
+        return diaryMapper.getDiaryByUserAndDate(userSeq, diaryDate);
     }
 
     // 다이어리 정보 업데이트
