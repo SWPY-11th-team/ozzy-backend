@@ -88,13 +88,12 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
 
             // 기존 사용자 처리
             int userId = userService.findUser(principal);
-            Token token;
             log.info("사용자 로그인 시작 1");
             if (userId != 0) {  // 기존 사용자
                 log.info("기존 사용자");
 
                 // 기존 사용자의 정보를 바탕으로 토큰 발급
-                token = jwtTokenUtil.generateToken(userId, principal);
+                 final Token token = jwtTokenUtil.generateToken(userId, principal);
 
                 // RefreshToken 저장
                 LocalDateTime expirationDateFromToken = jwtTokenUtil.getExpirationDateFromToken(token.getRefreshToken());
@@ -119,7 +118,7 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
                 UserRequest userRequest = UserRequest.add(seq, principal);
 
                 // 토큰 발급
-                token = jwtTokenUtil.generateToken(seq, principal);
+                final Token token = jwtTokenUtil.generateToken(seq, principal);
 
                 log.info("new accessToken : {}", token.getAccessToken());
                 log.info("new refreshToken : {}", token.getRefreshToken());
@@ -137,7 +136,7 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
                         .build().toUriString();
 
             } catch (Exception e) {
-                log.error(e.getMessage());
+                log.info(e.getMessage());
             }
 
         }

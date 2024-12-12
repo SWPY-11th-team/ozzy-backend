@@ -74,13 +74,13 @@ public class CookieUtils {
 
     public static void createCookieToken(Token token, HttpServletResponse response) {
         Cookie accessTokenCookie = new Cookie("accessToken", token.getAccessToken());
-        accessTokenCookie.setHttpOnly(true);    // // JavaScript에서 접근 불가
+        accessTokenCookie.setHttpOnly(false);    // // JavaScript에서 접근 불가
         accessTokenCookie.setPath("/"); // 모든경로 접속 가능
-        accessTokenCookie.setMaxAge(60 * 60);   // 1시간
+        accessTokenCookie.setMaxAge(60 * 60 * 24 * 7);   // 7시간 , 60 * 60 = 1시간
         response.addCookie(accessTokenCookie);
 
         Cookie refreshTokenCookie = new Cookie("refreshToken", token.getRefreshToken());
-        refreshTokenCookie.setHttpOnly(true);
+        refreshTokenCookie.setHttpOnly(false);
         refreshTokenCookie.setPath("/");
         refreshTokenCookie.setMaxAge(60 * 60 * 24 * 7); // 7일
         response.addCookie(refreshTokenCookie);
