@@ -6,6 +6,7 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
@@ -18,13 +19,11 @@ import java.util.Map;
 @Component
 public class JwtTokenUtil {
 
-    // todo value application 이동 , !! HS512에 적합한 비밀 키 재 생성
-    private static final String secretKey = "I4u+zERuz0fEHWx5qYN1guJ4gRUzIxdwyy+qHtM3V4LRO2WVtYVcnFw1E5fhtEvQfH8HMyhChCz3csQsdbZcXw==";
-//    private static final long accessTokenValidity = 1000 * 10; // 10초
-//    private static final long accessTokenValidity = 1000 * 60;  // 1분
-//    private static final long accessTokenValidity = 1000 * 60 * 30; // 30분
-    private static final long accessTokenValidity = 1000 * 60 * 60;  // 1시간
+    private static final long accessTokenValidity = 1000 * 60 * 60 * 24 * 7;  // 7일
     private static final long refreshTokenValidity = 1000 * 60 * 60 * 24 * 7; // 7일
+
+    @Value("${jwt.secret}")
+    private String secretKey;
 
     // 로그인 발급
     public Token generateToken(int seq, OAuth2UserPrincipal principal) {
