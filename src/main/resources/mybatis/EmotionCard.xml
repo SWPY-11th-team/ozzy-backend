@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.ozzy.emotioncard.mapper.EmotionCardMapper">
+
+    <insert id="saveEmotionCard" parameterType="com.example.ozzy.emotioncard.entity.EmotionCard"
+            useGeneratedKeys="true" keyProperty="emotionCardSeq" keyColumn="EMOTION_CARD_SEQ">
+        INSERT INTO OZZY.EMOTION_CARD (EMOTION_CARD_SEQ, IS_ANALYZED, REPLY, HAPPY, SAD, SURPRISED, ANGRY, FEARFUL, DISGUSTED, NEUTRALITY, CREATE_AT, UPDATE_AT)
+        VALUES (OZZY.EMOTION_CARD_SEQ.NEXTVAL, #{isAnalyzed}, #{reply}, #{happy}, #{sad}, #{surprised}, #{angry}, #{fearful}, #{disgusted}, #{neutrality}, sysdate, sysdate)
+    </insert>
+
+    <update id="updateEmotionCard" parameterType="com.example.ozzy.emotioncard.entity.EmotionCard">
+        UPDATE OZZY.EMOTION_CARD
+        SET IS_ANALYZED = #{isAnalyzed},
+            REPLY = #{reply},
+            HAPPY = #{happy},
+            SAD = #{sad},
+            SURPRISED = #{surprised},
+            ANGRY = #{angry},
+            FEARFUL = #{fearful},
+            DISGUSTED = #{disgusted},
+            NEUTRALITY = #{neutrality},
+            UPDATE_AT = sysdate
+        WHERE EMOTION_CARD_SEQ = #{emotionCardSeq}
+    </update>
+
+    <select id="getEmotionCardBySeq" parameterType="int" resultType="com.example.ozzy.emotioncard.entity.EmotionCard">
+        SELECT * FROM OZZY.EMOTION_CARD WHERE EMOTION_CARD_SEQ = #{seq}
+    </select>
+
+</mapper>

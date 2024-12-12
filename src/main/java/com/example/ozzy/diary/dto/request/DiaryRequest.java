@@ -4,14 +4,12 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
-import java.util.List;
-
 @Getter
 @Setter
 @ToString
-public class Reply {
-
-    private String reply;
-    private List<String> sentences;
-
+public class DiaryRequest {
+    private int userSeq;
+    private String diaryDate;
+    private String title;
+    private String content;
 }

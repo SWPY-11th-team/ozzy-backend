@@ -16,15 +16,15 @@ public class JwtAuthFilter implements Filter {
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
 
-//        HttpServletRequest httpRequest = (HttpServletRequest) request;
-//
-//        String token = httpRequest.getHeader("Authorization");
-//        if (jwtTokenUtil.isTokenExpired(token)) {
-//            throw new IllegalArgumentException("Refresh token has expired. Please login again.");
-//        }
-//
-//        int userId = jwtTokenUtil.getUserId(token);
-//        UserContext.setUserId(userId);
+        HttpServletRequest httpRequest = (HttpServletRequest) request;
+
+        String token = httpRequest.getHeader("Authorization");
+        if (jwtTokenUtil.isTokenExpired(token)) {
+            throw new IllegalArgumentException("Refresh token has expired. Please login again.");
+        }
+
+        int userId = jwtTokenUtil.getUserId(token);
+        UserContext.setUserId(userId);
 
         chain.doFilter(request, response);
     }
