@@ -89,7 +89,7 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
             // 기존 사용자 처리
             int userId = userService.findUser(principal);
             Token token;
-
+            log.info("사용자 로그인 시작 1");
             if (userId != 0) {  // 기존 사용자
                 log.info("기존 사용자");
 
@@ -112,28 +112,34 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
                         .queryParam("refreshToken", token.getRefreshToken())
                         .build().toUriString();
             }
-
+            log.info("신규 사용자 처리");
             // 신규 사용자 처리
-            int seq = userService.getNextUserSeq();
-            UserRequest userRequest = UserRequest.add(seq, principal);
+            try {
+                int seq = userService.getNextUserSeq();
+                UserRequest userRequest = UserRequest.add(seq, principal);
 
-            // 토큰 발급
-            token = jwtTokenUtil.generateToken(seq, principal);
+                // 토큰 발급
+                token = jwtTokenUtil.generateToken(seq, principal);
 
-            log.info("new accessToken : {}", token.getAccessToken());
-            log.info("new refreshToken : {}", token.getRefreshToken());
-            log.info("new provider : {}", principal.getUserInfo().getProvider());
+                log.info("new accessToken : {}", token.getAccessToken());
+                log.info("new refreshToken : {}", token.getRefreshToken());
+                log.info("new provider : {}", principal.getUserInfo().getProvider());
 
-            // 신규 사용자 저장 및 Refresh Token 저장
-            userService.insertUser(userRequest, token);
+                // 신규 사용자 저장 및 Refresh Token 저장
+                userService.insertUser(userRequest, token);
 
-            // 쿠키에 토큰 저장
-            CookieUtils.createCookieToken(token, response);
+                // 쿠키에 토큰 저장
+                CookieUtils.createCookieToken(token, response);
 
-            return UriComponentsBuilder.fromUriString(targetUrl)
-                    .queryParam("accessToken", token.getAccessToken())
-                    .queryParam("refreshToken", token.getRefreshToken())
-                    .build().toUriString();
+                return UriComponentsBuilder.fromUriString(targetUrl)
+                        .queryParam("accessToken", token.getAccessToken())
+                        .queryParam("refreshToken", token.getRefreshToken())
+                        .build().toUriString();
+
+            } catch (Exception e) {
+                log.error(e.getMessage());
+            }
+
         }
         else if ("logout".equalsIgnoreCase(mode)) {
 
