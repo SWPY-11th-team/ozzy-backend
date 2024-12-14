@@ -44,8 +44,6 @@ public class EmotionCardService {
         EmotionCard emotionCard = new EmotionCard();
         emotionCard.setIsAnalyzed("N");
         emotionCard.setReply("");
-//      emotionCard.setCreateAt(LocalDateTime.now());
-//      emotionCard.setUpdateAt(LocalDateTime.now());
 
         emotionCardMapper.saveEmotionCard(emotionCard);
         System.out.println("emotionCard = " + emotionCard);
@@ -53,8 +51,8 @@ public class EmotionCardService {
         return emotionCard.getEmotionCardSeq();
     }
 
-    public EmotionAnalysisResponse getEmotionAnalysis(int emtionCardSeq) {
-        EmotionCard emotionCard = emotionCardMapper.getEmotionCardBySeq(emtionCardSeq);
+    public EmotionAnalysisResponse getEmotionAnalysis(int emotionCardSeq) {
+        EmotionCard emotionCard = emotionCardMapper.getEmotionCardBySeq(emotionCardSeq);
 
         if(emotionCard == null) {
             throw new CommonException("감정카드가 없습니다.", 404);
@@ -85,10 +83,7 @@ public class EmotionCardService {
 
         EmotionAnalysisResponse response = new EmotionAnalysisResponse();
         response.setReply(emotionCard.getReply());
-
-        for (Map.Entry<String, Double> entry : topEmotions) {
-            response.getEmotionPercentages().put(entry.getKey(), entry.getValue());
-        }
+        response.setEmotionPercentages(topEmotions);
 
         return response;
     }

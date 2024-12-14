@@ -122,7 +122,7 @@ public class DiaryService {
         response.setEmotionCardSeq(diary.getEmotionCardSeq());
         response.setAddEmotionSeq(diary.getAddEmotionSeq());
         response.setCreateAt(diary.getCreateAt());
-        response.setUpdateAt(LocalDateTime.now()); // 업데이트 시각 설정
+        response.setUpdateAt(diary.getUpdateAt()); // 업데이트 시각 설정
         return response;
     }
 }
