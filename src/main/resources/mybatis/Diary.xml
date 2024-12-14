@@ -23,4 +23,9 @@
         WHERE USER_SEQ = #{userSeq} AND TRUNC(DIARY_DATE) = TRUNC(#{diaryDate})
     </update>
 
+    <delete id="deleteDiary" parameterType="map">
+        DELETE FROM OZZY.DIARY
+        WHERE  USER_SEQ = #{userSeq} AND TRUNC(DIARY_DATE) = TRUNC(#{diaryDate})
+    </delete>
+
 </mapper>

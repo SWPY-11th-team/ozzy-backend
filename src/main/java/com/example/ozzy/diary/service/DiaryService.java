@@ -1,5 +1,6 @@
 package com.example.ozzy.diary.service;
 
+import com.example.ozzy.addemotion.mapper.AddEmotionMapper;
 import com.example.ozzy.addemotion.service.AddEmotionService;
 import com.example.ozzy.common.UserContext;
 import com.example.ozzy.common.exception.domain.CommonException;
@@ -7,6 +8,7 @@ import com.example.ozzy.diary.dto.request.DiaryRequest;
 import com.example.ozzy.diary.dto.response.DiaryResponse;
 import com.example.ozzy.diary.entity.Diary;
 import com.example.ozzy.diary.mapper.DiaryMapper;
+import com.example.ozzy.emotioncard.mapper.EmotionCardMapper;
 import com.example.ozzy.emotioncard.service.EmotionCardService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.extern.slf4j.Slf4j;
@@ -23,11 +25,15 @@ public class DiaryService {
     private final DiaryMapper diaryMapper;
     private final EmotionCardService emotionCardService;
     private final AddEmotionService addEmotionService;
+    private final AddEmotionMapper addEmotionMapper;
+    private final EmotionCardMapper emotionCardMapper;
 
-    public DiaryService(DiaryMapper diaryMapper, EmotionCardService emotionCardService, AddEmotionService addEmotionService) {
+    public DiaryService(DiaryMapper diaryMapper, EmotionCardService emotionCardService, AddEmotionService addEmotionService, AddEmotionMapper addEmotionMapper, EmotionCardMapper emotionCardMapper) {
         this.diaryMapper = diaryMapper;
         this.emotionCardService = emotionCardService;
         this.addEmotionService = addEmotionService;
+        this.addEmotionMapper = addEmotionMapper;
+        this.emotionCardMapper = emotionCardMapper;
     }
 
     // 일기 생성
@@ -74,6 +80,18 @@ public class DiaryService {
         }
 
         return convertToResponse(diary);
+    }
+
+    public void deleteDiary(String diaryDate) {
+        int userId = UserContext.getUserId();
+        LocalDate dateTime = parseDiaryDate(diaryDate);
+        Diary diary = getExistingDiary(userId, dateTime);
+        int addEmotionSeq = diary.getAddEmotionSeq();
+        int emotionCardSeq = diary.getEmotionCardSeq();
+
+        addEmotionMapper.deleteAddEmotion(addEmotionSeq);
+        emotionCardMapper.deleteEmotionCard(emotionCardSeq);
+        diaryMapper.deleteDiary(userId, dateTime);
     }
 
     @Async

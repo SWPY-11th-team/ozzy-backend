@@ -72,4 +72,22 @@ public class DiaryController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
     }
+
+    @DeleteMapping
+    public ResponseEntity<?> delete(@RequestParam String diaryDate)  {
+        if (!diaryDate.matches("\\d{4}-\\d{2}-\\d{2}")) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(new DefaultResponse<>("잘못된 날짜 형식입니다. ex) yyyy-MM-dd", HttpStatus.BAD_REQUEST.value()));
+        }
+
+        try {
+            diaryService.deleteDiary(diaryDate);
+            DefaultResponse<DiaryResponse> response = new DefaultResponse<>("일기가 성공적으로 삭제되었습니다.", 200);
+            return ResponseEntity.ok(response);
+        } catch (CommonException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new DefaultResponse<>(e.getMessage(), e.getCode(), null));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
+    }
 }

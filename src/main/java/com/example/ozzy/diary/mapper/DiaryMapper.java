@@ -10,5 +10,6 @@ import java.time.LocalDate;
 public interface DiaryMapper {
     void saveDiary(Diary diary);
     void updateDiary(Diary diary);
+    void deleteDiary(int userSeq, LocalDate diaryDate);
     Diary getDiaryByUserAndDate(int userSeq, LocalDate diaryDate);
 }

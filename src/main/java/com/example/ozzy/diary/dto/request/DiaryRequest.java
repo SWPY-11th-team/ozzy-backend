@@ -8,7 +8,6 @@ import lombok.ToString;
 @Setter
 @ToString
 public class DiaryRequest {
-//    private int userSeq;
     private String diaryDate;
     private String title;
     private String content;

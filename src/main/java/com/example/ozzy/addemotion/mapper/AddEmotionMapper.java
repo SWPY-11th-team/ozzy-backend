@@ -8,5 +8,6 @@ import org.apache.ibatis.annotations.Mapper;
 public interface AddEmotionMapper {
     void saveAddEmotion(AddEmotion addEmotion);
     void updateAddEmotion(AddEmotion addEmotion);
+    void deleteAddEmotion(int addEmotionSeq);
     AddEmotion getAddEmotionBySeq(int addEmotionSeq);
 }

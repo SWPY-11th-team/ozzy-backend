@@ -7,5 +7,6 @@ import org.apache.ibatis.annotations.Mapper;
 public interface EmotionCardMapper {
     void saveEmotionCard(EmotionCard emotionCard);
     void updateEmotionCard(EmotionCard emotionCard);
+    void deleteEmotionCard(int emotionCardSeq);
     EmotionCard getEmotionCardBySeq(int seq);
 }

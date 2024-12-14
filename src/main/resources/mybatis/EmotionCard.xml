@@ -27,4 +27,9 @@
         SELECT * FROM OZZY.EMOTION_CARD WHERE EMOTION_CARD_SEQ = #{seq}
     </select>
 
+    <delete id="deleteEmotionCard" parameterType="int">
+        DELETE FROM OZZY.EMOTION_CARD
+        WHERE EMOTION_CARD_SEQ = #{emotionCardSeq}
+    </delete>
+
 </mapper>

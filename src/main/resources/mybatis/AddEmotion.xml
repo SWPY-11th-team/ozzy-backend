@@ -17,7 +17,12 @@
     <select id="getAddEmotionBySeq" parameterType="int" resultType="com.example.ozzy.addemotion.entity.AddEmotion">
         SELECT ADD_EMOTION_SEQ, EMOTIONS, CREATE_AT, UPDATE_AT
         FROM OZZY.ADD_EMOTION
-        WHERE ADD_EMOTION_SEQ = ${addEmotionSeq}
+        WHERE ADD_EMOTION_SEQ = #{addEmotionSeq}
     </select>
+
+    <delete id="deleteAddEmotion" parameterType="int">
+        DELETE FROM OZZY.ADD_EMOTION
+        WHERE ADD_EMOTION_SEQ = #{addEmotionSeq}
+    </delete>
 
 </mapper>
