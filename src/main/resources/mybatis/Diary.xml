@@ -2,15 +2,25 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.example.ozzy.diary.mapper.DiaryMapper">
 
-    <insert id="saveDiary" parameterType="com.example.ozzy.diary.entity.Diary"
-            useGeneratedKeys="true" keyProperty="userSeq" keyColumn="USER_SEQ">
+    <insert id="saveDiary" parameterType="com.example.ozzy.diary.entity.Diary">
         INSERT INTO OZZY.DIARY (USER_SEQ, DIARY_DATE, ADD_EMOTION_SEQ, EMOTION_CARD_SEQ, TITLE, CONTENT, CREATE_AT, UPDATE_AT)
         VALUES (#{userSeq}, #{diaryDate}, #{addEmotionSeq}, #{emotionCardSeq}, #{title}, #{content}, sysdate, sysdate)
     </insert>
 
     <select id="getDiaryByUserAndDate" parameterType="map" resultType="com.example.ozzy.diary.entity.Diary">
-        SELECT * FROM OZZY.DIARY
-        WHERE USER_SEQ = #{userSeq} AND DIARY_DATE = TO_TIMESTAMP(#{diaryDate}, 'YYYY-MM-DD HH24:MI:SS')
+        SELECT USER_SEQ, DIARY_DATE, TITLE, CONTENT, ADD_EMOTION_SEQ, EMOTION_CARD_SEQ, CREATE_AT, UPDATE_AT
+        FROM OZZY.DIARY
+        WHERE USER_SEQ = #{userSeq} AND TRUNC(DIARY_DATE) = TRUNC(#{diaryDate})
     </select>
+
+    <update id="updateDiary" parameterType="com.example.ozzy.diary.entity.Diary">
+        UPDATE OZZY.DIARY
+        SET TITLE = #{title},
+            CONTENT = #{content},
+            ADD_EMOTION_SEQ = #{addEmotionSeq},
+            EMOTION_CARD_SEQ = #{emotionCardSeq},
+            UPDATE_AT = sysdate
+        WHERE USER_SEQ = #{userSeq} AND TRUNC(DIARY_DATE) = TRUNC(#{diaryDate})
+    </update>
 
 </mapper>

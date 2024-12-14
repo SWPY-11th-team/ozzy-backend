@@ -9,7 +9,6 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 public class DiaryResponse {
-    private int userSeq; // 사용자 식별자 (users 테이블의 PK)
     private LocalDate diaryDate; // 일기 작성일
     private int addEmotionSeq; // ADD_EMOTION 테이블의 PK
     private int emotionCardSeq; // EMOTION_CARD 테이블의 PK

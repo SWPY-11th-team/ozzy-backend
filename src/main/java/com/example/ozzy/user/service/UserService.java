@@ -54,7 +54,8 @@ public class UserService {
     }
 
     public UserResponse selectUserInfo() {
-        return userMapper.selectUserInfo(UserContext.getUserId());
+        int userId = UserContext.getUserId();
+        return userMapper.selectUserInfo(userId);
     }
 
     public void updateUserName(UserRequest user) {
