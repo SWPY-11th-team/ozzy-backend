@@ -82,4 +82,22 @@
         WHERE USER_SEQ = #{userSeq}
     </update>
 
+    <select id="getTerms" parameterType="com.example.ozzy.user.dto.request.ServiceTermsRequest"
+        resultType="com.example.ozzy.user.dto.response.ServiceTermsResponse">
+        SELECT USER_SEQ, AGREED1, AGREED2, AGREED3, AGREED4, TO_CHAR(CREATE_AT, 'YYYY-MM-DD HH24:MI:SS') AS CREATE_AT
+        FROM OZZY.SERVICE_TERMS
+        WHERE 1=1
+          AND USER_SEQ = #{userSeq}
+    </select>
+
+    <select id="getUserFromDate" parameterType="int" resultType="com.example.ozzy.user.dto.response.UserFromDate">
+        SELECT
+            TRUNC(SYSDATE) - TRUNC(t1.CREATE_AT) AS todayFromDate,
+            COUNT(t2.USER_SEQ) AS diaryCount
+        FROM OZZY.USERS t1
+        INNER JOIN ozzy.DIARY t2 ON t1.USER_SEQ = t2.USER_SEQ
+        WHERE t1.USER_SEQ = #{seq}
+        GROUP BY TRUNC(SYSDATE) - TRUNC(t1.CREATE_AT)
+    </select>
+
 </mapper>

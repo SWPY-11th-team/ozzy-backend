@@ -23,7 +23,11 @@ public class ServiceTermsRequest {
         this.agreed4 = agreed4;
     }
 
-    public static ServiceTermsRequest firstAdd(int userSeq) {
-        return new ServiceTermsRequest(userSeq,"N","N","N","N");
+    public static ServiceTermsRequest firstAdd(int userSeq, ServiceTermsRequest request) {
+        return new ServiceTermsRequest(userSeq, request.agreed1, request.getAgreed2(), request.getAgreed3(), request.getAgreed4());
+    }
+
+    public static ServiceTermsRequest findTerms(int userSeq) {
+        return new ServiceTermsRequest(userSeq,null,null,null,null);
     }
 }
