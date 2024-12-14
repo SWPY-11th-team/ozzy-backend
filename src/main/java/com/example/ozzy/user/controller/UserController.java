@@ -5,7 +5,10 @@ import com.example.ozzy.common.exception.domain.DefaultResponse;
 import com.example.ozzy.oauth2.user.Token;
 import com.example.ozzy.oauth2.util.CookieUtils;
 import com.example.ozzy.oauth2.util.JwtTokenUtil;
+import com.example.ozzy.user.dto.request.ServiceTermsRequest;
 import com.example.ozzy.user.dto.request.UserRequest;
+import com.example.ozzy.user.dto.response.ServiceTermsResponse;
+import com.example.ozzy.user.dto.response.UserFromDate;
 import com.example.ozzy.user.dto.response.UserResponse;
 import com.example.ozzy.user.service.UserService;
 import jakarta.servlet.http.HttpServletResponse;
@@ -89,6 +92,44 @@ public class UserController {
         }
 
         return new ResponseEntity<>(new DefaultResponse<>(), HttpStatus.OK);
+    }
+
+    // 약관 등록
+    @PostMapping("/insert/terms")
+    public ResponseEntity<DefaultResponse<Void>> insertServiceTerms(@RequestBody ServiceTermsRequest serviceTermsRequest) {
+        try {
+            userService.insertServiceTerms(serviceTermsRequest);
+        } catch (CommonException e) {
+            return new ResponseEntity<>(new DefaultResponse<>(e.getMessage(), e.getCode()), HttpStatus.BAD_REQUEST);
+        }
+
+        return new ResponseEntity<>(new DefaultResponse<>(), HttpStatus.OK);
+    }
+
+    // 약관 가입 정보
+    @GetMapping("/get/terms")
+    public ResponseEntity<DefaultResponse<ServiceTermsResponse>> getTerms() {
+        try {
+            ServiceTermsResponse terms = userService.getTerms();
+            return new ResponseEntity<>(new DefaultResponse<>(terms), HttpStatus.OK);
+        } catch (CommonException e) {
+            return new ResponseEntity<>(new DefaultResponse<>(e.getMessage(), e.getCode()), HttpStatus.BAD_REQUEST);
+        } catch (Exception e) {
+            return new ResponseEntity<>(new DefaultResponse<>(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    // 마이페이지 상단
+    @GetMapping("/date")
+    public ResponseEntity<DefaultResponse<UserFromDate>> getUserFromDate() {
+        try {
+            UserFromDate userFromDate = userService.getUserFromDate();
+            return new ResponseEntity<>(new DefaultResponse<>(userFromDate), HttpStatus.OK);
+        } catch (CommonException e) {
+            return new ResponseEntity<>(new DefaultResponse<>(e.getMessage(), e.getCode()), HttpStatus.BAD_REQUEST);
+        } catch (Exception e) {
+            return new ResponseEntity<>(new DefaultResponse<>(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
 }
