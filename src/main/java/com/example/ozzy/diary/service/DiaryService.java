@@ -14,7 +14,6 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
 @Slf4j
@@ -59,6 +58,7 @@ public class DiaryService {
 
         updateDiaryFields(existingDiary, diaryRequest);
         diaryMapper.updateDiary(existingDiary);
+        addEmotionService.clearAddEmotion(existingDiary.getAddEmotionSeq());
         analyzeDiary(existingDiary);
 
         return convertToResponse(existingDiary);
@@ -91,8 +91,8 @@ public class DiaryService {
         diary.setContent(diaryRequest.getContent());
 
         // EMOTION_CARD 및 ADD_EMOTION 생성
-        diary.setEmotionCardSeq(emotionCardService.saveEmotionCard());
-        diary.setAddEmotionSeq(addEmotionService.saveAddEmotion());
+        diary.setEmotionCardSeq(emotionCardService.initEmotionCard());
+        diary.setAddEmotionSeq(addEmotionService.initAddEmotion());
 
         return diary;
     }
