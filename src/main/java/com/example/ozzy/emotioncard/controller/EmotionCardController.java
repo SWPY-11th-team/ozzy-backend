@@ -1,10 +1,7 @@
 package com.example.ozzy.emotioncard.controller;
 
-import com.example.ozzy.common.UserContext;
 import com.example.ozzy.common.exception.domain.CommonException;
 import com.example.ozzy.common.exception.domain.DefaultResponse;
-import com.example.ozzy.diary.dto.response.DiaryResponse;
-import com.example.ozzy.emotioncard.dto.request.EmotionCardRequest;
 import com.example.ozzy.emotioncard.dto.response.EmotionAnalysisResponse;
 import com.example.ozzy.emotioncard.service.EmotionCardService;
 import org.springframework.http.HttpStatus;
@@ -21,7 +18,7 @@ public class EmotionCardController {
         this.emotionCardService = emotionCardService;
     }
 
-    @GetMapping("/get")
+    @GetMapping
     public ResponseEntity<?> getEmotionCard(@RequestParam int emotionCardId) {
         try {
             EmotionAnalysisResponse emotionAnalysisResponse = emotionCardService.getEmotionAnalysis(emotionCardId);

@@ -1,6 +1,5 @@
 package com.example.ozzy.diary.controller;
 
-import com.example.ozzy.common.UserContext;
 import com.example.ozzy.common.exception.domain.CommonException;
 import com.example.ozzy.common.exception.domain.DefaultResponse;
 import com.example.ozzy.diary.dto.request.DiaryRequest;
@@ -19,7 +18,7 @@ public class DiaryController {
 
     private final DiaryService diaryService;
 
-    @PostMapping("/add")
+    @PostMapping
     public ResponseEntity<DefaultResponse<DiaryResponse>> add(@RequestBody DiaryRequest diaryRequest) throws JsonProcessingException {
         if (!diaryRequest.getDiaryDate().matches("\\d{4}-\\d{2}-\\d{2}")) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
@@ -37,7 +36,7 @@ public class DiaryController {
         }
     }
 
-    @GetMapping("/get")
+    @GetMapping
     public ResponseEntity<?> getDiary(@RequestParam String diaryDate) {
         if (!diaryDate.matches("\\d{4}-\\d{2}-\\d{2}")) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
@@ -55,7 +54,7 @@ public class DiaryController {
         }
     }
 
-    @PutMapping("/update")
+    @PutMapping
     public ResponseEntity<?> update(@RequestBody DiaryRequest diaryRequest) throws JsonProcessingException {
         if (!diaryRequest.getDiaryDate().matches("\\d{4}-\\d{2}-\\d{2}")) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)

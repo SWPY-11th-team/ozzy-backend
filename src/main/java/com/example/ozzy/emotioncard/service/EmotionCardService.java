@@ -40,13 +40,12 @@ public class EmotionCardService {
     private static final String SYSTEM_MESSAGE_SPLIT = "- 일기 답변 및 문장 나누기 시스템입니다.\n- 사용자가 자신의 일기를 입력하면, 일기에 대한 답변과 일기를 문장 단위로 나누어 이를 json 형식으로 응답합니다.\n- 일기에 대한 답변은 사용자의 일기 내용을 파악하여, 적절한 공감이 담아 4문장 분량으로 표현합니다. \n- 문장 나누기는 배열로 하여 각 문장이 배열에 들어가는 형태이며, 마침표로 구분될 때 문장이 너무 짧다면 앞이나 뒷 문장과 합쳐진 문장으로 분리합니다.\n- 답변은 json 형식으로 출력합니다.\n- 아래 예시를 참고합니다. 답변은 항상 아래 예시와 같은 포맷으로 나와야합니다.\n\n###\n사용자: 어제 새벽에 유튜브를 보느라 늦게 자버렸다. 그래서 오늘 오후 4시까지 늦잠을 잤다. 오늘은 한진 역량검사를 봐야해서 마음이 약간 조급했지만, 일단 밥을 먹고 역량검사를 준비했다. 역량검사는 원래 보던 유형이 아니라 약간 당황했지만, 그래도 어느 정도 잘 본 것 같다. 그리고 내일은 다음 주 면접 때 입고 갈 정장을 대여하러 가야한다. 우하하 설렌다.\\n어시스턴트: \\n{\\n  \\\"reply\\\": \\\"어제 늦게 잔 만큼 오늘 늦잠을 자서 하루가 조금 흐트러진 느낌이 들었겠어요. 하지만 중요한 역량검사를 준비하고 잘 마친 당신의 모습에서 집중력과 책임감이 느껴져요. 내일은 면접 준비로 정장을 대여하러 가는 설렘도 있으니, 좋은 일이 더 많이 이어질 것 같아요!\\\",\\n  \\\"\\bsentences\\\": [\\\"어제 새벽에 유튜브를 보느라 늦게 자버렸다.\\\", \\\"그래서 오늘 오후 4시까지 늦잠을 잤다.\\\", \\\"오늘은 한진 역량검사를 봐야 해서 마음이 약간 조급했지만, 일단 밥을 먹고 역량검사를 준비했다.\\\", \\\"역량검사는 원래 보던 유형이 아니라 약간 당황했지만, 그래도 어느 정도 잘 본 것 같다.\\\", \\\"그리고 내일은 다음 주 면접 때 입고 갈 정장을 대여하러 가야 한다.\\\", \\\"우하하 설렌다.\\\"]\\n}\"";
     private static final String SYSTEM_MESSAGE_EMOTION = "- 사용자가 문장을 입력하면 감정 분석 결과를 응답합니다. \n- 감정 분석은 사용자의 문장에 대해 진행합니다. 문장의 감정은 {\"기쁨\", \"슬픔\", \"놀람\", \"분노\", \"공포\", \"나쁨\", \"중립\"} 7가지 중 하나로 분류합니다. 반드시 7개의 감정 중 하나로만 분류합니다. 분류 시 softmax 함수를 활용하며, 임계값은 0.4로 지정합니다. 모든 감정 확률이 임계값 이하라면, \"중립\"으로 처리합니다. \n- 아래 예시를 참고합니다. 답변은 항상 아래 예시와 같은 포맷으로 나와야합니다.\n\n###\n사용자: 어제 새벽에 유튜브를 보느라 늦게 자버렸다.\noutput: 중립\n\n사용자: 그래서 오늘 오후 4시까지 늦잠을 잤다.\noutput: 중립\n\n사용자: 오늘은 한진 역량검사를 봐야 해서 마음이 약간 조급했지만, 일단 밥을 먹고 역량검사를 준비했다.\noutput: 공포\n\n사용자: 역량검사는 원래 보던 유형이 아니라 약간 당황했지만, 그래도 어느 정도 잘 본 것 같다.\noutput: 기쁨\n\n사용자: 그리고 내일은 다음 주 면접 때 입고 갈 정장을 대여하러 가야 한다.\noutput: 중립\n\n사용자: 흑흑 슬프다.\noutput: 슬픔.";
 
-    public int saveEmotionCard() {
+    public int initEmotionCard() {
         EmotionCard emotionCard = new EmotionCard();
         emotionCard.setIsAnalyzed("N");
         emotionCard.setReply("");
 
         emotionCardMapper.saveEmotionCard(emotionCard);
-        System.out.println("emotionCard = " + emotionCard);
 
         return emotionCard.getEmotionCardSeq();
     }
@@ -143,8 +142,6 @@ public class EmotionCardService {
 
     private void updateEmotionCard(int emotionCardSeq, String reply, Map<String, Integer> emotionCounts) {
 
-        System.out.println("reply = " + reply);
-
         EmotionCard emotionCard = new EmotionCard();
         emotionCard.setEmotionCardSeq(emotionCardSeq);
         emotionCard.setIsAnalyzed("Y");
@@ -156,14 +153,9 @@ public class EmotionCardService {
         emotionCard.setFearful(emotionCounts.get("공포"));
         emotionCard.setDisgusted(emotionCounts.get("나쁨"));
         emotionCard.setNeutrality(emotionCounts.get("중립"));
-//        emotionCard.setUpdateAt(LocalDateTime.now());
 
         // EMOTION_CARD 업데이트
-        try {
-            emotionCardMapper.updateEmotionCard(emotionCard);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        emotionCardMapper.updateEmotionCard(emotionCard);
     }
 
     private String getReplyAndSplitSentences(String userDiary) {
