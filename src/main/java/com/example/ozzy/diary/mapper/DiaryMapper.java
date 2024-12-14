@@ -14,4 +14,5 @@ public interface DiaryMapper {
     void deleteDiary(int userSeq, LocalDate diaryDate);
     List<LocalDate> getWeeklyCount(@Param("userSeq") int userSeq, @Param("startDate") LocalDate startDate);
     Diary getDiaryByUserAndDate(int userSeq, LocalDate diaryDate);
+
 }

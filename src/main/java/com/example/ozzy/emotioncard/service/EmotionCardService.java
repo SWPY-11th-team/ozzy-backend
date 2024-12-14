@@ -4,7 +4,10 @@ import com.example.ozzy.common.exception.domain.CommonException;
 import com.example.ozzy.diary.dto.request.Message;
 import com.example.ozzy.diary.dto.request.MessageRequest;
 import com.example.ozzy.diary.entity.Diary;
+import com.example.ozzy.diary.mapper.DiaryMapper;
 import com.example.ozzy.emotioncard.dto.response.EmotionAnalysisResponse;
+import com.example.ozzy.emotioncard.dto.response.LibraryResponse;
+import com.example.ozzy.emotioncard.dto.response.OverallEmotionStats;
 import com.example.ozzy.emotioncard.entity.EmotionCard;
 import com.example.ozzy.emotioncard.mapper.EmotionCardMapper;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -138,6 +141,79 @@ public class EmotionCardService {
         analyzeSentenceEmotions(sentences, emotionCounts);
 
         updateEmotionCard(diary.getEmotionCardSeq(), reply, emotionCounts);
+    }
+
+    public List<LibraryResponse> getMonthlyEmotions(String month) {
+        // 주어진 월에 해당하는 일기 데이터를 조회
+        List<Diary> diaries = emotionCardMapper.findByDiaryDateStartsWith(month); // 예: "2024-12"
+
+        List<LibraryResponse> libraryResponses = new ArrayList<>();
+
+        for (Diary diary : diaries) {
+            LibraryResponse response = new LibraryResponse();
+            response.setDate(diary.getDiaryDate().toString()); // 날짜 설정
+
+            // 감정 카드 정보를 가져옵니다.
+            Map<String, Integer> emotions = getEmotionsFromCard(diary.getEmotionCardSeq());
+            List<Map<String, Integer>> topEmotions = getTopEmotionsLibrary(emotions);
+
+            response.setTopEmotions(topEmotions);
+            libraryResponses.add(response);
+        }
+
+        return libraryResponses;
+    }
+
+    private Map<String, Integer> getEmotionsFromCard(int emotionCardSeq) {
+        EmotionCard emotionCard = emotionCardMapper.getEmotionCardBySeq(emotionCardSeq);
+        if (emotionCard == null) {
+            throw new CommonException("감정 카드가 존재하지 않습니다.", 404);
+        }
+
+        Map<String, Integer> emotionCounts = new HashMap<>();
+        emotionCounts.put("HAPPY", emotionCard.getHappy());
+        emotionCounts.put("SAD", emotionCard.getSad());
+        emotionCounts.put("SURPRISED", emotionCard.getSurprised());
+        emotionCounts.put("ANGRY", emotionCard.getAngry());
+        emotionCounts.put("FEARFUL", emotionCard.getFearful());
+        emotionCounts.put("DISGUSTED", emotionCard.getDisgusted());
+        emotionCounts.put("NEUTRALITY", emotionCard.getNeutrality());
+
+        return emotionCounts;
+    }
+
+    private List<Map<String, Integer>> getTopEmotionsLibrary(Map<String, Integer> emotions) {
+        return emotions.entrySet().stream()
+                .filter(entry -> entry.getValue() > 0 && !entry.getKey().equals("NEUTRALITY")) // 중립 및 0보다 큰 감정만 필터링
+                .sorted((e1, e2) -> e2.getValue().compareTo(e1.getValue()))
+                .limit(3)
+                .map(entry -> {
+                    Map<String, Integer> topEmotion = new HashMap<>();
+                    topEmotion.put(entry.getKey(), entry.getValue());
+                    return topEmotion;
+                })
+                .toList();
+    }
+
+    public OverallEmotionStats getOverallEmotionStats(String month) {
+        OverallEmotionStats stats = new OverallEmotionStats();
+        stats.setMonth(month);
+
+        Map<String, Integer> overallEmotions = new HashMap<>();
+
+        // 주어진 월에 해당하는 모든 일기 데이터를 조회
+        List<Diary> diaries = emotionCardMapper.findByDiaryDateStartsWith(month); // 예: "2024-12"
+
+        for (Diary diary : diaries) {
+            Map<String, Integer> emotions = getEmotionsFromCard(diary.getEmotionCardSeq());
+
+            for (Map.Entry<String, Integer> entry : emotions.entrySet()) {
+                overallEmotions.merge(entry.getKey(), entry.getValue(), Integer::sum);
+            }
+        }
+
+        stats.setEmotions(overallEmotions);
+        return stats;
     }
 
     private void updateEmotionCard(int emotionCardSeq, String reply, Map<String, Integer> emotionCounts) {
