@@ -15,8 +15,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
+import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.time.temporal.TemporalAdjusters;
 
 @Slf4j
 @Service
@@ -82,6 +84,7 @@ public class DiaryService {
         return convertToResponse(diary);
     }
 
+    // 일기 삭제
     public void deleteDiary(String diaryDate) {
         int userId = UserContext.getUserId();
         LocalDate dateTime = parseDiaryDate(diaryDate);
@@ -92,6 +95,15 @@ public class DiaryService {
         addEmotionMapper.deleteAddEmotion(addEmotionSeq);
         emotionCardMapper.deleteEmotionCard(emotionCardSeq);
         diaryMapper.deleteDiary(userId, dateTime);
+    }
+
+    // 일기 주간 개수 조회
+    public int getWeeklyCount(String date) {
+        int userId = UserContext.getUserId();
+        LocalDate dateTime = parseDiaryDate(date);
+        LocalDate startDate = dateTime.with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY));
+
+        return diaryMapper.getWeeklyCount(userId, startDate);
     }
 
     @Async

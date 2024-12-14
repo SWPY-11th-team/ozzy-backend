@@ -11,5 +11,6 @@ public interface DiaryMapper {
     void saveDiary(Diary diary);
     void updateDiary(Diary diary);
     void deleteDiary(int userSeq, LocalDate diaryDate);
+    int getWeeklyCount(int userSeq, LocalDate startDate);
     Diary getDiaryByUserAndDate(int userSeq, LocalDate diaryDate);
 }

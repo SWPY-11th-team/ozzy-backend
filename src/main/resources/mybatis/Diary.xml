@@ -28,4 +28,11 @@
         WHERE  USER_SEQ = #{userSeq} AND TRUNC(DIARY_DATE) = TRUNC(#{diaryDate})
     </delete>
 
+    <select id="getWeeklyCount" parameterType="map" resultType="int">
+        SELECT COUNT(DIARY_DATE)
+        FROM OZZY.DIARY
+        WHERE USER_SEQ = #{userSeq}
+          AND DIARY_DATE BETWEEN TRUNC(#{startDate}) AND TRUNC(#{startDate} + 7)
+    </select>
+
 </mapper>

@@ -90,4 +90,17 @@ public class DiaryController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
     }
+
+    @GetMapping("/count")
+    public ResponseEntity<?> count(@RequestParam String date) {
+        try {
+            int count = diaryService.getWeeklyCount(date);
+            DefaultResponse<?> response = new DefaultResponse<>("주간 일기 개수 조회 성공.", 200, count);
+            return ResponseEntity.ok(response);
+        } catch (CommonException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new DefaultResponse<>(e.getMessage(), e.getCode(), null));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
+    }
 }
