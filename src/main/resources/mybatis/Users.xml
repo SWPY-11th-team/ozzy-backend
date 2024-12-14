@@ -93,11 +93,12 @@
     <select id="getUserFromDate" parameterType="int" resultType="com.example.ozzy.user.dto.response.UserFromDate">
         SELECT
             TRUNC(SYSDATE) - TRUNC(t1.CREATE_AT) AS todayFromDate,
-            COUNT(t2.USER_SEQ) AS diaryCount
+            COUNT(t2.USER_SEQ) AS diaryCount,
+            t1.NICKNAME as name
         FROM OZZY.USERS t1
         INNER JOIN ozzy.DIARY t2 ON t1.USER_SEQ = t2.USER_SEQ
         WHERE t1.USER_SEQ = #{seq}
-        GROUP BY TRUNC(SYSDATE) - TRUNC(t1.CREATE_AT)
+        GROUP BY TRUNC(SYSDATE) - TRUNC(t1.CREATE_AT), t1.nickname
     </select>
 
 </mapper>
