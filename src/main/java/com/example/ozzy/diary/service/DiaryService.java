@@ -6,6 +6,7 @@ import com.example.ozzy.common.UserContext;
 import com.example.ozzy.common.exception.domain.CommonException;
 import com.example.ozzy.diary.dto.request.DiaryRequest;
 import com.example.ozzy.diary.dto.response.DiaryResponse;
+import com.example.ozzy.diary.dto.response.WeeklyDiaryCountResponse;
 import com.example.ozzy.diary.entity.Diary;
 import com.example.ozzy.diary.mapper.DiaryMapper;
 import com.example.ozzy.emotioncard.mapper.EmotionCardMapper;
@@ -19,6 +20,7 @@ import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.TemporalAdjusters;
+import java.util.*;
 
 @Slf4j
 @Service
@@ -98,12 +100,22 @@ public class DiaryService {
     }
 
     // 일기 주간 개수 조회
-    public int getWeeklyCount(String date) {
+    public WeeklyDiaryCountResponse getWeeklyCount(String date) {
         int userId = UserContext.getUserId();
         LocalDate dateTime = parseDiaryDate(date);
         LocalDate startDate = dateTime.with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY));
 
-        return diaryMapper.getWeeklyCount(userId, startDate);
+        List<LocalDate> result = diaryMapper.getWeeklyCount(userId, startDate);
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        List<String> dates = result.stream()
+                .map(writtenDate -> writtenDate.format(formatter))  // LocalDate를 String으로 변환
+                .toList();
+
+        WeeklyDiaryCountResponse weeklyDiaryCountResponse = new WeeklyDiaryCountResponse();
+        weeklyDiaryCountResponse.setCount(result.size());
+        weeklyDiaryCountResponse.setDates(dates);
+
+        return weeklyDiaryCountResponse;
     }
 
     @Async

@@ -4,6 +4,7 @@ import com.example.ozzy.common.exception.domain.CommonException;
 import com.example.ozzy.common.exception.domain.DefaultResponse;
 import com.example.ozzy.diary.dto.request.DiaryRequest;
 import com.example.ozzy.diary.dto.response.DiaryResponse;
+import com.example.ozzy.diary.dto.response.WeeklyDiaryCountResponse;
 import com.example.ozzy.diary.service.DiaryService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.RequiredArgsConstructor;
@@ -94,8 +95,8 @@ public class DiaryController {
     @GetMapping("/count")
     public ResponseEntity<?> count(@RequestParam String date) {
         try {
-            int count = diaryService.getWeeklyCount(date);
-            DefaultResponse<?> response = new DefaultResponse<>("주간 일기 개수 조회 성공.", 200, count);
+            WeeklyDiaryCountResponse weeklyDiaryCountResponse = diaryService.getWeeklyCount(date);
+            DefaultResponse<?> response = new DefaultResponse<>("주간 일기 개수 조회 성공.", 200, weeklyDiaryCountResponse);
             return ResponseEntity.ok(response);
         } catch (CommonException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new DefaultResponse<>(e.getMessage(), e.getCode(), null));
