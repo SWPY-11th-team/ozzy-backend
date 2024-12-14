@@ -32,7 +32,7 @@
         SELECT DIARY_DATE
         FROM OZZY.DIARY
         WHERE USER_SEQ = #{userSeq}
-          AND DIARY_DATE BETWEEN TRUNC(#{startDate}) AND TRUNC(#{startDate} + 6)
+          AND DIARY_DATE BETWEEN TRUNC(#{startDate}) AND TRUNC(#{startDate} + 7)
         ORDER BY DIARY_DATE
     </select>
 
