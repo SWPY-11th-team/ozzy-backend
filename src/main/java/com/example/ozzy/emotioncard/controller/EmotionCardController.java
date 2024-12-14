@@ -53,8 +53,7 @@ public class EmotionCardController {
             response.put("monthlyEmotions", monthlyEmotions);
             response.put("overallEmotionStats", overallStats);
 
-            return ResponseEntity.ok(response);
-
+            return ResponseEntity.status(200).body(new DefaultResponse<>("감정 조회 성공", 200, response));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(new DefaultResponse<>("서버 오류가 발생했습니다.", HttpStatus.INTERNAL_SERVER_ERROR.value()));
