@@ -47,7 +47,7 @@ public class DiaryController {
         // 일기 조회
         try {
             DiaryResponse diaryResponse = diaryService.getDiary(diaryDate);
-            return ResponseEntity.ok(diaryResponse);
+            return ResponseEntity.status(200).body(new DefaultResponse<>("일기 조회 성공", 200, diaryResponse));
         } catch (CommonException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new DefaultResponse<>(e.getMessage(), e.getCode(), null));
         } catch (Exception e) {
