@@ -25,13 +25,13 @@ public class EmotionCardService {
     private final EmotionCardMapper emotionCardMapper;
     private final RestTemplate restTemplate;
 
-    private final String HOST = "https://clovastudio.apigw.ntruss.com/testapp/v1/chat-completions/HCX-003";
+    private final String HOST = "https://clovastudio.apigw.ntruss.com/serviceapp/v1/chat-completions/HCX-003";
 
     @Value("${clova-studio.api-key}")
     private String API_KEY;
 
-    @Value("${clova-studio.api-key-primary-val}")
-    private String API_KEY_PRIMARY_VAL;
+    @Value("${clova-studio.apigw-api-key}")
+    private String APIGW_API_KEY;
 
     @Value("${clova-studio.request-id}")
     private String REQUEST_ID;
@@ -183,7 +183,7 @@ public class EmotionCardService {
     private HttpHeaders createHeaders() {
         HttpHeaders headers = new HttpHeaders();
         headers.set("X-NCP-CLOVASTUDIO-API-KEY", API_KEY);
-        headers.set("X-NCP-APIGW-API-KEY", API_KEY_PRIMARY_VAL);
+        headers.set("X-NCP-APIGW-API-KEY", APIGW_API_KEY);
         headers.set("X-NCP-CLOVASTUDIO-REQUEST-ID", REQUEST_ID);
         headers.setContentType(MediaType.APPLICATION_JSON);
         headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
