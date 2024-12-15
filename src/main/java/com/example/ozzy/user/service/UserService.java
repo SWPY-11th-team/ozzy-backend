@@ -96,6 +96,9 @@ public class UserService {
     }
 
     public UserFromDate getUserFromDate() {
-        return userMapper.getUserFromDate(UserContext.getUserId());
+        UserFromDate userFromDate = userMapper.getUserFromDate(UserContext.getUserId());
+        userFromDate.setTodayFromDate(userFromDate.getTodayFromDate() + 1);
+
+        return userFromDate;
     }
 }
