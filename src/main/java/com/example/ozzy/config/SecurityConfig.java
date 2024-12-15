@@ -65,6 +65,8 @@ public class SecurityConfig {
         CorsConfiguration config = new CorsConfiguration();
 
         config.addAllowedOrigin("http://localhost:3000");
+        config.addAllowedOrigin("https://main.d30k6e3i6fic5f.amplifyapp.com");
+        config.addAllowedOrigin("https://delightful-fairy-4f6927.netlify.app");
         config.addAllowedMethod("*");
         config.addAllowedHeader("*");
         config.setAllowCredentials(true);
