@@ -32,9 +32,11 @@
         WHERE EMOTION_CARD_SEQ = #{emotionCardSeq}
     </delete>
 
-    <select id="findByDiaryDateStartsWith" parameterType="String" resultType="com.example.ozzy.diary.entity.Diary">
+    <select id="findByDiaryDateStartsWith" parameterType="com.example.ozzy.emotioncard.dto.request.LibraryRequest"
+            resultType="com.example.ozzy.diary.entity.Diary">
         SELECT * FROM OZZY.DIARY
         WHERE TO_CHAR(DIARY_DATE, 'YYYY-MM') = #{month}
+        and user_seq = #{seq}
     </select>
 
 </mapper>

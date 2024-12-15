@@ -1,10 +1,12 @@
 package com.example.ozzy.emotioncard.service;
 
+import com.example.ozzy.common.UserContext;
 import com.example.ozzy.common.exception.domain.CommonException;
 import com.example.ozzy.diary.dto.request.Message;
 import com.example.ozzy.diary.dto.request.MessageRequest;
 import com.example.ozzy.diary.entity.Diary;
 import com.example.ozzy.diary.mapper.DiaryMapper;
+import com.example.ozzy.emotioncard.dto.request.LibraryRequest;
 import com.example.ozzy.emotioncard.dto.response.EmotionAnalysisResponse;
 import com.example.ozzy.emotioncard.dto.response.LibraryResponse;
 import com.example.ozzy.emotioncard.dto.response.OverallEmotionStats;
@@ -145,7 +147,7 @@ public class EmotionCardService {
 
     public List<LibraryResponse> getMonthlyEmotions(String month) {
         // 주어진 월에 해당하는 일기 데이터를 조회
-        List<Diary> diaries = emotionCardMapper.findByDiaryDateStartsWith(month); // 예: "2024-12"
+        List<Diary> diaries = emotionCardMapper.findByDiaryDateStartsWith(new LibraryRequest(UserContext.getUserId(), month)); // 예: "2024-12"
 
         List<LibraryResponse> libraryResponses = new ArrayList<>();
 
@@ -202,7 +204,7 @@ public class EmotionCardService {
         Map<String, Integer> overallEmotions = new HashMap<>();
 
         // 주어진 월에 해당하는 모든 일기 데이터를 조회
-        List<Diary> diaries = emotionCardMapper.findByDiaryDateStartsWith(month); // 예: "2024-12"
+        List<Diary> diaries = emotionCardMapper.findByDiaryDateStartsWith(new LibraryRequest(UserContext.getUserId(), month)); // 예: "2024-12"
 
         for (Diary diary : diaries) {
             Map<String, Integer> emotions = getEmotionsFromCard(diary.getEmotionCardSeq());
