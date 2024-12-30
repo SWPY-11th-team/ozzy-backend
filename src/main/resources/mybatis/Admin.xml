@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.ozzy.notice.mapper.AdminMapper">
+
+    <select id="selectUsers" parameterType="map" resultType="com.example.ozzy.admin.entity.Users">
+        SELECT USER_SEQ,NICKNAME,PROVIDER,EMAIL
+        FROM OZZY.USERS
+        ORDER BY CREATE_AT DESC
+        OFFSET #{offset} ROWS FETCH NEXT #{limit} ROWS ONLY
+    </select>
+
+    <select id="selectUsersCount" resultType="int">
+        SELECT count(*)
+        FROM OZZY.USERS
+    </select>
+
+    <select id="selectDetail" parameterType="int" resultType="com.example.ozzy.admin.entity.UserDetail">
+        SELECT
+            TO_CHAR(DIARY_DATE, 'YYYY-MM-DD') AS DIARY_DATE
+            ,TITLE
+            ,CONTENT
+            ,REPLY
+        FROM OZZY.USERS T1
+                 INNER JOIN OZZY.DIARY T2 ON T1.USER_SEQ = T2.USER_SEQ
+                 INNER JOIN OZZY.EMOTION_CARD T3 ON T2.EMOTION_CARD_SEQ = T3.EMOTION_CARD_SEQ
+        WHERE 1=1
+          AND T1.USER_SEQ = #{seq}
+        ORDER BY T2.DIARY_DATE DESC
+    </select>
+
+</mapper>

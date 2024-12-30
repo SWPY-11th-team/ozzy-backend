@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>사용자 상세 정보</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f9;
+        }
+
+        h1 {
+            text-align: left;
+            margin-top: 20px;
+            margin-left: 20px;
+            color: #333;
+        }
+
+        table {
+            width: 90%;
+            margin: 20px auto;
+            border-collapse: collapse;
+            background-color: #fff;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        th, td {
+            padding: 10px;
+            text-align: left;
+            border: 1px solid #ddd;
+        }
+
+        th {
+            background-color: #007BFF;
+            color: white;
+            font-weight: bold;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+
+        tr:hover {
+            background-color: #f1f1f1;
+        }
+
+        .reply {
+            font-style: italic;
+            color: #555;
+        }
+
+        .back-button {
+            display: block;
+            width: 100px;
+            margin: 20px auto;
+            padding: 10px 20px;
+            text-align: center;
+            text-decoration: none;
+            background-color: #007BFF;
+            color: white;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        }
+
+        .back-button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+
+<h1>사용자 상세 정보</h1>
+
+<table>
+    <thead>
+    <tr>
+        <th>날짜</th>
+        <th>제목</th>
+        <th>내용</th>
+        <th>응답</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="detail : ${items}">
+        <td th:text="${detail.diaryDate}"></td>
+        <td th:text="${detail.title}"></td>
+        <td th:text="${detail.content}"></td>
+        <td class="reply" th:text="${detail.reply}"></td>
+    </tr>
+    </tbody>
+</table>
+
+<a href="/admin/list" class="back-button">뒤로가기</a>
+
+</body>
+</html>
